@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+@theme {
+  --color-glass: rgba(255, 255, 255, 0.7);
+  --color-glass-dark: rgba(255, 255, 255, 0.4);
+  --color-glass-border: rgba(255, 255, 255, 0.5);
+}
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-green-50 via-emerald-50/80 to-teal-100 text-gray-900 font-sans antialiased min-h-screen bg-fixed;
+    background-image: radial-gradient(at 0% 0%, hsla(153, 100%, 96%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(164, 100%, 95%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(170, 80%, 93%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(140, 70%, 95%, 1) 0px, transparent 50%);
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/60 backdrop-blur-2xl border border-white/60;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+  }
+
+  .glass-dark {
+    @apply bg-slate-900/80 backdrop-blur-2xl border border-slate-700/50 text-white;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card {
+    @apply bg-white/50 backdrop-blur-xl border border-white/60 transition-all duration-500 hover:-translate-y-1.5 hover:bg-white/80;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-card:hover {
+    box-shadow: 0 12px 36px rgba(16, 185, 129, 0.12);
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: skewX(-20deg);
+    transition: all 0.7s ease;
+  }
+
+  .glass-card:hover::before {
+    left: 200%;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-green-600 via-emerald-500 to-teal-600;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-pulse-slow {
+    animation: pulseSlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-glow {
+    animation: glowPulse 3s infinite alternate;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+
+  50% {
+    transform: translateY(-12px) scale(1.02);
+  }
+
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    filter: blur(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes pulseSlow {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+  }
+
+  100% {
+    box-shadow: 0 0 25px rgba(52, 211, 153, 0.7), 0 0 10px rgba(20, 184, 166, 0.5);
+  }
+}
