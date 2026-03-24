@@ -30,7 +30,7 @@ const CheckoutPage = () => {
 
         const fetchWallet = async () => {
             try {
-                const walRes = await fetch('http://localhost:5000/api/wallet', {
+                const walRes = await fetch('/api/wallet', {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
                 const walData = await walRes.json();
@@ -52,7 +52,7 @@ const CheckoutPage = () => {
         try {
             // Process each item in the cart sequentially
             for (const item of cartItems) {
-                const res = await fetch(`http://localhost:5000/api/wallet/purchase/${item.product._id}`, {
+                const res = await fetch(`/api/wallet/purchase/${item.product._id}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

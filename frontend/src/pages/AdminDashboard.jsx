@@ -23,7 +23,7 @@ const AdminDashboard = () => {
             try {
                 // Fetch Users
                 if (activeTab === 'users') {
-                    const res = await fetch('http://localhost:5000/api/admin/users', {
+                    const res = await fetch('/api/admin/users', {
                         headers: { Authorization: `Bearer ${user.token}` }
                     });
                     const data = await res.json();
@@ -32,7 +32,7 @@ const AdminDashboard = () => {
                 
                 // Fetch Products
                 if (activeTab === 'products') {
-                    const res = await fetch('http://localhost:5000/api/admin/products', {
+                    const res = await fetch('/api/admin/products', {
                         headers: { Authorization: `Bearer ${user.token}` }
                     });
                     const data = await res.json();
@@ -41,7 +41,7 @@ const AdminDashboard = () => {
 
                 // Fetch Orders/Disputes
                 if (activeTab === 'disputes') {
-                    const res = await fetch('http://localhost:5000/api/admin/orders', {
+                    const res = await fetch('/api/admin/orders', {
                         headers: { Authorization: `Bearer ${user.token}` }
                     });
                     const data = await res.json();
@@ -60,7 +60,7 @@ const AdminDashboard = () => {
     const deleteUserHandler = async (id) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             try {
-                const res = await fetch(`http://localhost:5000/api/admin/users/${id}`, {
+                const res = await fetch(`/api/admin/users/${id}`, {
                     method: 'DELETE',
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
 
     const verifyProductHandler = async (id, status) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/products/${id}/verify`, {
+            const res = await fetch(`/api/admin/products/${id}/verify`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
 
     const resolveDisputeHandler = async (orderId, resolution) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/wallet/resolve/${orderId}`, {
+            const res = await fetch(`/api/wallet/resolve/${orderId}`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
             if (res.ok) {
                 alert(`Dispute resolved: ${resolution}`);
                 // Refresh orders
-                const updatedRes = await fetch('http://localhost:5000/api/admin/orders', {
+                const updatedRes = await fetch('/api/admin/orders', {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
                 const updatedOrders = await updatedRes.json();
@@ -121,7 +121,7 @@ const AdminDashboard = () => {
 
     const updateTrackingHandler = async (orderId, trackingStatus) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/tracking`, {
+            const res = await fetch(`/api/admin/orders/${orderId}/tracking`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
             });
             if (res.ok) {
                 // Refresh orders
-                const updatedRes = await fetch('http://localhost:5000/api/admin/orders', {
+                const updatedRes = await fetch('/api/admin/orders', {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
                 const updatedOrders = await updatedRes.json();

@@ -16,7 +16,7 @@ const DashboardPage = () => {
         if (user) {
             const fetchWallet = async () => {
                 try {
-                    const res = await fetch('http://localhost:5000/api/wallet', {
+                    const res = await fetch('/api/wallet', {
                         headers: { Authorization: `Bearer ${user.token}` },
                     });
                     const data = await res.json();
@@ -31,7 +31,7 @@ const DashboardPage = () => {
 
                 if (user.role === 'Seller') {
                     try {
-                        const earRes = await fetch('http://localhost:5000/api/wallet/earnings', {
+                        const earRes = await fetch('/api/wallet/earnings', {
                             headers: { Authorization: `Bearer ${user.token}` },
                         });
                         const earData = await earRes.json();
@@ -94,7 +94,7 @@ const DashboardPage = () => {
         try {
             setIsDepositModalOpen(false);
 
-            const res = await fetch('http://localhost:5000/api/wallet/verify-paystack-deposit', {
+            const res = await fetch('/api/wallet/verify-paystack-deposit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

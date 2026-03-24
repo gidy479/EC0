@@ -9,7 +9,7 @@ const OrdersPage = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/orders', {
+                const res = await fetch('/api/orders', {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
                 const data = await res.json();
@@ -29,7 +29,7 @@ const OrdersPage = () => {
         if (!reason) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/api/wallet/dispute/${orderId}`, {
+            const res = await fetch(`/api/wallet/dispute/${orderId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

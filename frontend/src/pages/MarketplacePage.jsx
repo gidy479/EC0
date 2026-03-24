@@ -13,7 +13,7 @@ const MarketplacePage = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:5000/api/products?keyword=${submittedSearch}&pageNumber=${page}`);
+                const res = await fetch(`/api/products?keyword=${submittedSearch}&pageNumber=${page}`);
                 const data = await res.json();
                 if (res.ok) {
                     setProducts(data.products || []);

@@ -9,7 +9,7 @@ const ReportsDashboard = () => {
     useEffect(() => {
         const fetchReports = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/reports/overview', {
+                const res = await fetch('/api/reports/overview', {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
 

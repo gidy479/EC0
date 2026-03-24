@@ -22,7 +22,7 @@ const AddProductPage = () => {
         formData.append('image', file);
         setUploadingImage(true);
         try {
-            const res = await fetch('http://localhost:5000/api/upload', {
+            const res = await fetch('/api/upload', {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${user.token}`,
@@ -62,7 +62,7 @@ const AddProductPage = () => {
 
         try {
             // 1. Create Product
-            const prodRes = await fetch('http://localhost:5000/api/products', {
+            const prodRes = await fetch('/api/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const AddProductPage = () => {
             if (!prodRes.ok) throw new Error(productData.message);
 
             // 2. Trigger AI Verification
-            const verRes = await fetch(`http://localhost:5000/api/verify/${productData._id}`, {
+            const verRes = await fetch(`/api/verify/${productData._id}`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${user.token}`
