@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../config/apiConfig';
+import { getSafeImageUrl } from '../utils/imageUtils';
 
 const AddProductPage = () => {
     const { user } = useContext(AuthContext);
@@ -33,8 +34,9 @@ const AddProductPage = () => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
 
-            // Adjust path for full URL if needed, but backend gives e.g., /uploads/...
-            setImage(`${API_BASE_URL}${data.imageUrl}`);
+            // Save only the relative path (e.g., /uploads/...) returned by the backend
+            // Our getSafeImageUrl utility will handle prepending API_BASE_URL on display
+            setImage(data.imageUrl);
         } catch (error) {
             alert('Error uploading image: ' + error.message);
         } finally {
@@ -218,7 +220,7 @@ const AddProductPage = () => {
                             {uploadingImage && <p className="text-[10px] font-black uppercase text-blue-600 mt-2 animate-pulse">Uploading...</p>}
                             {image && (
                                 <div className="mt-4 flex justify-center md:justify-start">
-                                    <img src={image} alt="Product Preview" className="w-24 h-24 object-cover rounded-xl shadow-lg border-2 border-white/40" />
+                                    <img src={getSafeImageUrl(image)} alt="Product Preview" className="w-24 h-24 object-cover rounded-xl shadow-lg border-2 border-white/40" />
                                 </div>
                             )}
                         </div>

@@ -14,7 +14,7 @@ const products = [
         verificationStatus: "verified",
         verificationReasoning: "Material analysis confirms 100% natural, fast-growing FSC-certified Moso bamboo.",
         aiConfidenceScore: 0.98,
-        images: ["http://localhost:5000/uploads/bamboo_toothbrush_1774352921098.png"]
+        images: ["/uploads/bamboo_toothbrush_1774352921098.png"]
     },
     {
         name: "Sleek Stainless Steel Water Bottle",
@@ -25,7 +25,7 @@ const products = [
         verificationStatus: "verified",
         verificationReasoning: "Verified 304 food-grade stainless steel construction. Free from lead, BPA, and toxic liners.",
         aiConfidenceScore: 0.96,
-        images: ["http://localhost:5000/uploads/stainless_steel_bottle_1774352935659.png"]
+        images: ["/uploads/stainless_steel_bottle_1774352935659.png"]
     },
     {
         name: "High-Capacity Solar Power Bank",
@@ -36,7 +36,7 @@ const products = [
         verificationStatus: "verified",
         verificationReasoning: "Solar conversion efficiency verified. E-waste reduction compliance confirmed.",
         aiConfidenceScore: 0.94,
-        images: ["http://localhost:5000/uploads/solar_power_bank_1774352956482.png"]
+        images: ["/uploads/solar_power_bank_1774352956482.png"]
     },
     {
         name: "Organic Cotton Eco-Tote Bag",
@@ -47,7 +47,7 @@ const products = [
         verificationStatus: "verified",
         verificationReasoning: "GOTS organic certification validated. No synthetic dyes or polyester blends detected.",
         aiConfidenceScore: 0.97,
-        images: ["http://localhost:5000/uploads/organic_tote_bag_1774352972437.png"]
+        images: ["/uploads/organic_tote_bag_1774352972437.png"]
     },
     {
         name: "Artisanal Beeswax Food Wraps",
@@ -58,7 +58,7 @@ const products = [
         verificationStatus: "verified",
         verificationReasoning: "Ingredients strictly composed of organic natural fibers and food-safe sustainable wax.",
         aiConfidenceScore: 0.93,
-        images: ["http://localhost:5000/uploads/beeswax_wraps_1774352989780.png"]
+        images: ["/uploads/beeswax_wraps_1774352989780.png"]
     }
 ];
 

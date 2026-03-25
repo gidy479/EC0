@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
+import { getSafeImageUrl } from '../utils/imageUtils';
 
 const CartPage = () => {
     const { cartItems, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount } = useContext(CartContext);
@@ -47,7 +48,7 @@ const CartPage = () => {
                             {/* Product Image */}
                             <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 bg-white rounded-xl overflow-hidden self-center sm:self-start">
                                 {item.product.images && item.product.images.length > 0 ? (
-                                    <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
+                                    <img src={getSafeImageUrl(item.product.images[0])} alt={item.product.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-400">No Image</div>
                                 )}

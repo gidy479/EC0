@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import API_BASE_URL from '../config/apiConfig';
+import { getSafeImageUrl } from '../utils/imageUtils';
 
 const ProductDetailPage = () => {
     const { id } = useParams();
@@ -85,7 +86,7 @@ const ProductDetailPage = () => {
                     {/* Image */}
                     <div className="w-full md:w-1/2 bg-white/30 flex items-center justify-center min-h-[300px] md:min-h-[450px] p-4 md:p-6 backdrop-blur-sm border-b md:border-b-0 md:border-r border-white/40">
                         {product.images && product.images.length > 0 ? (
-                            <img src={product.images[0]} alt={product.name} className="w-full h-full max-h-[400px] md:max-h-none object-cover rounded-2xl shadow-sm" />
+                            <img src={getSafeImageUrl(product.images[0])} alt={product.name} className="w-full h-full max-h-[400px] md:max-h-none object-cover rounded-2xl shadow-sm" />
                         ) : (
                             <svg className="w-24 h-24 text-green-200/60 drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                         )}
