@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Root configuration for EcoMarket monorepo",
   "scripts": {
-    "install:all": "npm install --prefix frontend && npm install --prefix backend",
+    "install:all": "npm install --prefix frontend --legacy-peer-deps && npm install --prefix backend --legacy-peer-deps",
     "build:frontend": "npm run build --prefix frontend",
     "build:full": "npm run install:all && npm run build:frontend",
     "start": "node backend/server.js"
