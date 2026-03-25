@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "description": "Root configuration for EcoMarket monorepo",
   "scripts": {
-    "install:all": "cd frontend && npm install --legacy-peer-deps && cd ../backend && npm install",
-    "build:frontend": "cd frontend && npm run build",
-    "build:full": "npm run install:all && npm run build:frontend",
-    "build": "npm run build:full",
+    "build": "cd frontend && npm install --legacy-peer-deps && npm run build && cd ../backend && npm install",
     "start": "node backend/server.js"
   }
 }
