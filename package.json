@@ -1,0 +1,11 @@
+{
+  "name": "ec0-root",
+  "version": "1.0.0",
+  "description": "Root configuration for EcoMarket monorepo",
+  "scripts": {
+    "install:all": "npm install --prefix frontend && npm install --prefix backend",
+    "build:frontend": "npm run build --prefix frontend",
+    "build:full": "npm run install:all && npm run build:frontend",
+    "start": "node backend/server.js"
+  }
+}
