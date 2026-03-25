@@ -15,19 +15,25 @@ import CartPage from './pages/CartPage';
 import AdminDashboard from './pages/AdminDashboard';
 import { CartProvider, CartContext } from './context/CartContext';
 
+import { useState, useContext } from 'react';
+
 function Navbar() {
   const { user } = useContext(AuthContext);
   const { cartCount } = useContext(CartContext);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
-    <header className="glass-dark sticky top-0 z-50 mb-6">
+    <header className="glass-dark sticky top-0 z-[60] mb-6">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-4 md:px-8">
-        <Link to="/" className="text-2xl font-extrabold tracking-tighter flex items-center gap-2 group">
+        <Link to="/" className="text-2xl font-extrabold tracking-tighter flex items-center gap-2 group z-50" onClick={() => setIsMobileMenuOpen(false)}>
           <div className="bg-gradient-to-br from-green-400 to-teal-400 text-gray-900 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           </div>
           EcoMarket<span className="text-green-400">Plus</span>
         </Link>
-        <nav className="space-x-2 md:space-x-4 flex items-center">
+
+        {/* Desktop Nav */}
+        <nav className="hidden lg:flex items-center space-x-2 md:space-x-4">
           <Link to="/cart" className="relative text-gray-300 hover:text-white transition px-3 py-2 flex items-center group">
             <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
             {cartCount > 0 && (
@@ -40,14 +46,14 @@ function Navbar() {
               {user.role === 'Seller' && (
                 <Link to="/add-product" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Add Product</Link>
               )}
+              <Link to="/reports" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Reports</Link>
+              <Link to="/profile" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Profile</Link>
               <Link to="/dashboard" className="ml-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl hover:from-green-600 hover:to-teal-600 font-bold transition shadow-lg border border-white/10 flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 Dashboard
               </Link>
-              <Link to="/reports" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Reports</Link>
-              <Link to="/profile" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Profile</Link>
               {user.role === 'Admin' && (
-                <Link to="/admin" className="text-red-400 hover:text-red-300 font-bold transition px-4 py-2 rounded-lg hover:bg-red-500/20 border border-red-500/30 bg-red-500/10 ml-2 shadow-[0_0_10px_rgba(239,68,68,0.2)]">Admin Panel</Link>
+                <Link to="/admin" className="text-red-400 hover:text-red-300 font-bold transition px-4 py-2 rounded-lg hover:bg-red-500/20 border border-red-500/30 bg-red-500/10 ml-2 shadow-[0_0_10px_rgba(239,68,68,0.2)]">Admin</Link>
               )}
             </>
           ) : (
@@ -59,7 +65,52 @@ function Navbar() {
             </>
           )}
         </nav>
+
+        {/* Mobile Nav Toggle */}
+        <div className="flex lg:hidden items-center gap-3">
+          <Link to="/cart" className="relative text-gray-300 transition p-2" onClick={() => setIsMobileMenuOpen(false)}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            {cartCount > 0 && (
+                <span className="absolute top-1 right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-teal-500 rounded-full shadow-sm shadow-teal-500/50">{cartCount}</span>
+            )}
+          </Link>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-gray-300 hover:text-white p-2 z-50"
+          >
+            {isMobileMenuOpen ? (
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            ) : (
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 bg-slate-900/95 backdrop-blur-xl animate-fade-in flex flex-col pt-24 px-6 space-y-4">
+          <Link to="/" className="text-2xl font-bold text-white border-b border-white/10 pb-4" onClick={() => setIsMobileMenuOpen(false)}>Marketplace</Link>
+          {user ? (
+            <>
+              <Link to="/dashboard" className="text-2xl font-bold text-white border-b border-white/10 pb-4" onClick={() => setIsMobileMenuOpen(false)}>Dashboard</Link>
+              {user.role === 'Seller' && (
+                <Link to="/add-product" className="text-2xl font-bold text-white border-b border-white/10 pb-4" onClick={() => setIsMobileMenuOpen(false)}>Add Product</Link>
+              )}
+              <Link to="/reports" className="text-2xl font-bold text-white border-b border-white/10 pb-4" onClick={() => setIsMobileMenuOpen(false)}>Reports</Link>
+              <Link to="/profile" className="text-2xl font-bold text-white border-b border-white/10 pb-4" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
+              {user.role === 'Admin' && (
+                <Link to="/admin" className="text-2xl font-bold text-red-500 border-b border-white/10 pb-4" onClick={() => setIsMobileMenuOpen(false)}>Admin Panel</Link>
+              )}
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-2xl font-bold text-white border-b border-white/10 pb-4" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
+              <Link to="/register" className="text-2xl font-bold text-white border-b border-white/10 pb-4" onClick={() => setIsMobileMenuOpen(false)}>Register</Link>
+            </>
+          )}
+        </div>
+      )}
     </header>
   );
 }

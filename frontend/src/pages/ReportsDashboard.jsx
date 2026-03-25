@@ -69,62 +69,69 @@ const ReportsDashboard = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto animate-fade-in-up space-y-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-0 animate-fade-in-up space-y-8">
             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8 pb-4 border-b border-gray-200/50">
-                <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">
-                    My {isBuyer ? 'Spending' : 'Performance'} Reports
+                <h2 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">
+                    My {isBuyer ? 'Spending' : 'Reports'}
                 </h2>
                 <button
                     onClick={handleExportCSV}
-                    className="px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl hover:from-indigo-600 hover:to-blue-700 font-bold transition shadow-lg flex items-center justify-center gap-2"
+                    className="w-full md:w-auto px-5 py-3 md:py-2.5 bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl hover:from-indigo-600 hover:to-blue-700 font-bold transition shadow-lg flex items-center justify-center gap-2 active:scale-95"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Export CSV
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Sales / Purchases Card */}
-                <div className="glass p-6 rounded-3xl shadow-sm border border-blue-100 flex flex-col justify-between">
+                <div className="glass p-6 md:p-8 rounded-3xl shadow-sm border border-blue-100 flex flex-col justify-between group">
                     <div>
-                        <h3 className="text-lg font-bold text-gray-500 mb-2">{isBuyer ? 'Total Spent' : 'Total Revenue'}</h3>
-                        <p className="text-4xl font-extrabold text-blue-800">
+                        <h3 className="text-xs md:text-sm font-black uppercase tracking-widest text-gray-400 mb-2">{isBuyer ? 'Total Spent' : 'Total Revenue'}</h3>
+                        <p className="text-3xl md:text-4xl font-black text-blue-800 tracking-tight">
                             GH₵{isBuyer ? (sales?.totalSpent?.toFixed(2) || 0) : (sales?.totalRevenue?.toFixed(2) || 0)}
                         </p>
                     </div>
-                    <div className="mt-6 flex justify-between text-sm text-gray-600">
-                        <span>Orders {isBuyer ? 'Placed' : 'Received'}: <strong className="text-gray-900">{isBuyer ? sales?.totalOrdersPlaced : sales?.totalOrdersReceived || 0}</strong></span>
-                        <span>Items {isBuyer ? 'Bought' : 'Sold'}: <strong className="text-gray-900">{isBuyer ? sales?.productsBoughtCount : sales?.totalItemsSold || 0}</strong></span>
+                    <div className="mt-8 flex flex-col gap-2 text-xs md:text-sm text-gray-500 border-t border-blue-50/50 pt-4">
+                        <div className="flex justify-between">
+                            <span>Orders {isBuyer ? 'Placed' : 'Received'}:</span>
+                            <strong className="text-gray-900 font-black">{isBuyer ? sales?.totalOrdersPlaced : sales?.totalOrdersReceived || 0}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Items {isBuyer ? 'Bought' : 'Sold'}:</span>
+                            <strong className="text-gray-900 font-black">{isBuyer ? sales?.productsBoughtCount : sales?.totalItemsSold || 0}</strong>
+                        </div>
                     </div>
                 </div>
 
                 {/* Products Card (Only for Sellers) */}
                 {!isBuyer && (
-                    <div className="glass p-6 rounded-3xl shadow-sm border border-teal-100 flex flex-col justify-between">
+                    <div className="glass p-6 md:p-8 rounded-3xl shadow-sm border border-teal-100 flex flex-col justify-between">
                         <div>
-                            <h3 className="text-lg font-bold text-gray-500 mb-2">My Catalog</h3>
-                            <p className="text-4xl font-extrabold text-teal-800">{products?.totalProductsListed || 0}</p>
+                            <h3 className="text-xs md:text-sm font-black uppercase tracking-widest text-gray-400 mb-2">My Catalog</h3>
+                            <p className="text-3xl md:text-4xl font-black text-teal-800 tracking-tight">{products?.totalProductsListed || 0} <span className="text-sm font-bold text-teal-600">Items Listed</span></p>
                         </div>
-                        <div className="mt-6 flex justify-between text-sm text-gray-600">
-                            <span className="text-orange-600">Low Stock: <strong>{products?.lowStockCount || 0}</strong></span>
+                        <div className="mt-8 flex justify-between items-center text-xs md:text-sm text-gray-500 border-t border-teal-50/50 pt-4">
+                            <span>Status:</span>
+                            <span className="px-3 py-1 bg-orange-50 text-orange-600 rounded-lg font-black uppercase tracking-tighter text-[10px] border border-orange-100">Low Stock: {products?.lowStockCount || 0}</span>
                         </div>
                     </div>
                 )}
 
                 {/* Transactions Card */}
-                <div className="glass p-6 rounded-3xl shadow-sm border border-indigo-100 flex flex-col justify-between">
+                <div className="glass p-6 md:p-8 rounded-3xl shadow-sm border border-indigo-100 flex flex-col justify-between md:col-span-2 lg:col-span-1">
                     <div>
-                        <h3 className="text-lg font-bold text-gray-500 mb-2">Transaction Volume</h3>
-                        <p className="text-4xl font-extrabold text-indigo-800">GH₵{transactions?.totalVolume?.toFixed(2) || 0}</p>
+                        <h3 className="text-xs md:text-sm font-black uppercase tracking-widest text-gray-400 mb-2">Transaction Volume</h3>
+                        <p className="text-3xl md:text-4xl font-black text-indigo-800 tracking-tight">GH₵{transactions?.totalVolume?.toFixed(2) || 0}</p>
                     </div>
-                    <div className="mt-6 flex flex-col gap-1 text-sm text-gray-600">
+                    <div className="mt-8 flex flex-col gap-2 text-xs md:text-sm text-gray-500 border-t border-indigo-50/50 pt-4">
                         <div className="flex justify-between">
                             <span>Total Count:</span>
-                            <strong className="text-gray-900">{transactions?.totalTransactions || 0}</strong>
+                            <strong className="text-gray-900 font-black">{transactions?.totalTransactions || 0}</strong>
                         </div>
                         <div className="flex justify-between">
                             <span>Completed / Escrow:</span>
-                            <strong className="text-gray-900">{transactions?.completedTransactions} / {transactions?.pendingEscrow}</strong>
+                            <strong className="text-gray-900 font-black">{transactions?.completedTransactions} / {transactions?.pendingEscrow}</strong>
                         </div>
                     </div>
                 </div>
@@ -133,12 +140,15 @@ const ReportsDashboard = () => {
             {/* Low Stock Warning Section (Sellers only) */}
             {!isBuyer && products?.lowStockCount > 0 && (
                 <div className="mt-8">
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">Low Stock Alert</h3>
-                    <div className="grid gap-4">
+                    <h3 className="text-xl md:text-2xl font-black text-gray-800 mb-6 flex items-center gap-2">
+                        <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        Low Stock Alerts
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {products.lowStockProducts.map(fp => (
-                            <div key={fp.id} className="bg-orange-50/50 p-4 rounded-xl border border-orange-200 flex justify-between items-center">
-                                <span className="font-bold text-gray-800">{fp.name}</span>
-                                <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-orange-100 text-orange-800">
+                            <div key={fp.id} className="bg-orange-50/40 backdrop-blur-md p-5 rounded-2xl border border-orange-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-sm hover:shadow-md transition">
+                                <span className="font-bold text-gray-800 text-sm md:text-base">{fp.name}</span>
+                                <span className="px-3 py-1 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest bg-orange-600 text-white shadow-lg shadow-orange-500/20">
                                     Only {fp.stock} left
                                 </span>
                             </div>

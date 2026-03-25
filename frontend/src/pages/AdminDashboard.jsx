@@ -148,28 +148,28 @@ const AdminDashboard = () => {
     if (!user || user.role !== 'Admin') return null;
 
     return (
-        <div className="max-w-7xl mx-auto animate-fade-in-up">
+        <div className="max-w-7xl mx-auto px-4 sm:px-0 animate-fade-in-up">
             <div className="flex justify-between items-center mb-8 border-b border-gray-200/50 pb-4">
-                <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-orange-600">Admin Control Panel</h2>
+                <h2 className="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-orange-600">Admin Panel</h2>
             </div>
 
             {/* Tabs */}
-            <div className="flex space-x-4 mb-8">
+            <div className="flex space-x-2 md:space-x-4 mb-8 overflow-x-auto pb-2 scrollbar-hide no-scrollbar">
                 <button 
                     onClick={() => setActiveTab('users')}
-                    className={`px-8 py-3 rounded-xl font-bold shadow-sm transition transform hover:-translate-y-0.5 ${activeTab === 'users' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                    className={`px-4 md:px-8 py-3 rounded-xl font-bold shadow-sm transition transform active:scale-95 whitespace-nowrap text-xs md:text-base ${activeTab === 'users' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
                 >
-                    Manage Users
+                    Users
                 </button>
                 <button 
                     onClick={() => setActiveTab('products')}
-                    className={`px-8 py-3 rounded-xl font-bold shadow-sm transition transform hover:-translate-y-0.5 ${activeTab === 'products' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                    className={`px-4 md:px-8 py-3 rounded-xl font-bold shadow-sm transition transform active:scale-95 whitespace-nowrap text-xs md:text-base ${activeTab === 'products' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
                 >
-                    Moderate Products
+                    Products
                 </button>
                 <button 
                     onClick={() => setActiveTab('disputes')}
-                    className={`px-8 py-3 rounded-xl font-bold shadow-sm transition transform hover:-translate-y-0.5 ${activeTab === 'disputes' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                    className={`px-4 md:px-8 py-3 rounded-xl font-bold shadow-sm transition transform active:scale-95 whitespace-nowrap text-xs md:text-base ${activeTab === 'disputes' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
                 >
                     Escrow & Disputes
                 </button>
@@ -178,7 +178,7 @@ const AdminDashboard = () => {
             {loading ? (
                 <div className="text-center py-10 text-gray-500">Loading data...</div>
             ) : (
-                <div className="glass p-8 rounded-3xl shadow-lg relative overflow-hidden">
+                <div className="glass p-4 md:p-8 rounded-3xl shadow-lg relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-red-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 pointer-events-none"></div>
 
                     {activeTab === 'users' && (
