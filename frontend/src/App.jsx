@@ -23,11 +23,9 @@ function Navbar() {
   return (
     <header className="glass-dark sticky top-0 z-[60] mb-6">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-4 md:px-8">
-        <Link to="/" className="text-2xl font-extrabold tracking-tighter flex items-center gap-2 group z-50" onClick={() => setIsMobileMenuOpen(false)}>
-          <div className="bg-gradient-to-br from-green-400 to-teal-400 text-gray-900 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-          </div>
-          EcoMarket<span className="text-green-400">Plus</span>
+        <Link to="/" className="text-xl md:text-2xl font-black tracking-tighter flex items-center gap-2.5 group z-50 transition active:scale-95" onClick={() => setIsMobileMenuOpen(false)}>
+          <img src="/favicon.png" alt="Logo" className="w-8 h-8 md:w-10 md:h-10 rounded-xl shadow-lg transform group-hover:rotate-12 transition-transform duration-300 border border-white/20" />
+          <span className="text-white drop-shadow-sm">EcoMarket<span className="text-green-400">Plus</span></span>
         </Link>
 
         {/* Desktop Nav */}
