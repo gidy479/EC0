@@ -1,5 +1,6 @@
 node_modules/
 .env
-uploads/
+# uploads/ (Removing from ignore to ensure seed images are deployed to Render)
+# uploads/
 frontend/dist/
 .vscode/

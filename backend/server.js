@@ -39,7 +39,14 @@ app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 const path = require('path');
 const fs = require('fs');
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+// Ensure uploads directory exists
+const uploadsPath = path.join(__dirname, '/uploads');
+if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath, { recursive: true });
+}
+
+app.use('/uploads', express.static(uploadsPath));
 
 // Basic Route
 if (process.env.NODE_ENV === 'production') {
