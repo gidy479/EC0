@@ -3,9 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-// Connect to database
-connectDB();
-
+// app initializations
 const app = express();
 
 // Middleware
@@ -47,11 +45,22 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-// Start server
-const PORT = process.env.PORT || 5000;
-const HOST = '0.0.0.0'; 
+// Connect to database and start server
+const startServer = async () => {
+    try {
+        await connectDB();
+        
+        const PORT = process.env.PORT || 5000;
+        const HOST = '0.0.0.0';
 
-app.listen(PORT, HOST, () => {
-    console.log(`Server running on http://${HOST}:${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+        app.listen(PORT, HOST, () => {
+            console.log(`Server running on http://${HOST}:${PORT}`);
+            console.log(`Environment: ${process.env.NODE_ENV || 'production'}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error.message);
+        process.exit(1);
+    }
+};
+
+startServer();
