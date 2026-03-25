@@ -23,14 +23,24 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 const path = require('path');
+const fs = require('fs');
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // Basic Route
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
-    app.get(/.*/, (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'));
-    });
+    const frontendPath = path.join(__dirname, '../frontend/dist');
+    if (fs.existsSync(frontendPath)) {
+        app.use(express.static(frontendPath));
+        app.get(/.*/, (req, res) => {
+            res.sendFile(path.resolve(frontendPath, 'index.html'));
+        });
+        console.log('Serving frontend from:', frontendPath);
+    } else {
+        console.log('Frontend dist folder not found at:', frontendPath);
+        app.get('/', (req, res) => {
+            res.send('Backend is running, but frontend build is missing.');
+        });
+    }
 } else {
     app.get('/api/status', (req, res) => {
         res.json({ status: 'API is running...' });
@@ -39,6 +49,9 @@ if (process.env.NODE_ENV === 'production') {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+const HOST = '0.0.0.0'; 
+
+app.listen(PORT, HOST, () => {
+    console.log(`Server running on http://${HOST}:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
