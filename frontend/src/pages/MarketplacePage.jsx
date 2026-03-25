@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import API_BASE_URL from '../config/apiConfig';
 
 const MarketplacePage = () => {
@@ -128,9 +129,9 @@ const MarketplacePage = () => {
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter leading-none mb-1">Price</span>
                                             <span className="text-xl font-black text-gray-900 leading-none">GH₵{product.price.toFixed(2)}</span>
                                         </div>
-                                        <a href={`/product/${product._id}`} className="bg-gradient-to-r from-green-600 to-teal-700 text-white px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg transform active:scale-95 transition-all">
-                                            Explorer
-                                        </a>
+                                        <Link to={`/product/${product._id}`} className="bg-gradient-to-r from-green-600 to-teal-700 text-white px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg transform active:scale-90 transition-all hover:translate-y-[-2px] hover:shadow-green-500/20">
+                                            View
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
