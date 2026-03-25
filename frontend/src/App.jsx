@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import { useContext } from 'react';
+import { useState, useContext } from 'react';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -14,8 +14,6 @@ import ProfilePage from './pages/ProfilePage';
 import CartPage from './pages/CartPage';
 import AdminDashboard from './pages/AdminDashboard';
 import { CartProvider, CartContext } from './context/CartContext';
-
-import { useState, useContext } from 'react';
 
 function Navbar() {
   const { user } = useContext(AuthContext);
