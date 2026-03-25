@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../config/apiConfig';
 
 const DashboardPage = () => {
     const { user, logout } = useContext(AuthContext);
@@ -16,7 +17,7 @@ const DashboardPage = () => {
         if (user) {
             const fetchWallet = async () => {
                 try {
-                    const res = await fetch('/api/wallet', {
+                    const res = await fetch(`${API_BASE_URL}/api/wallet`, {
                         headers: { Authorization: `Bearer ${user.token}` },
                     });
                     const data = await res.json();
@@ -31,7 +32,7 @@ const DashboardPage = () => {
 
                 if (user.role === 'Seller') {
                     try {
-                        const earRes = await fetch('/api/wallet/earnings', {
+                        const earRes = await fetch(`${API_BASE_URL}/api/wallet/earnings`, {
                             headers: { Authorization: `Bearer ${user.token}` },
                         });
                         const earData = await earRes.json();
@@ -94,7 +95,7 @@ const DashboardPage = () => {
         try {
             setIsDepositModalOpen(false);
 
-            const res = await fetch('/api/wallet/verify-paystack-deposit', {
+            const res = await fetch(`${API_BASE_URL}/api/wallet/verify-paystack-deposit`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../config/apiConfig';
 
 const MarketplacePage = () => {
     const [products, setProducts] = useState([]);
@@ -13,7 +14,7 @@ const MarketplacePage = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`/api/products?keyword=${submittedSearch}&pageNumber=${page}`);
+                const res = await fetch(`${API_BASE_URL}/api/products?keyword=${submittedSearch}&pageNumber=${page}`);
                 const data = await res.json();
                 if (res.ok) {
                     setProducts(data.products || []);

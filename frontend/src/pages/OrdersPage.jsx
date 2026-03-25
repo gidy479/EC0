@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import API_BASE_URL from '../config/apiConfig';
 
 const OrdersPage = () => {
     const { user } = useContext(AuthContext);
@@ -9,7 +10,7 @@ const OrdersPage = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const res = await fetch('/api/orders', {
+                const res = await fetch(`${API_BASE_URL}/api/orders`, {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
                 const data = await res.json();
@@ -24,12 +25,12 @@ const OrdersPage = () => {
         if (user) fetchOrders();
     }, [user]);
 
-    const disputeOrderHandler = async (orderId) => {
+        const disputeOrderHandler = async (orderId) => {
         const reason = window.prompt("Please provide a reason for disputing this order:");
         if (!reason) return;
 
         try {
-            const res = await fetch(`/api/wallet/dispute/${orderId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/wallet/dispute/${orderId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

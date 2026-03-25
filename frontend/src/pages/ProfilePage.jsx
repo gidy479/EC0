@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../config/apiConfig';
 
 const ProfilePage = () => {
     const { user } = useContext(AuthContext);
@@ -25,7 +26,7 @@ const ProfilePage = () => {
 
         const fetchProfile = async () => {
             try {
-                const res = await fetch('/api/auth/profile', {
+                const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
                 const data = await res.json();
@@ -52,14 +53,14 @@ const ProfilePage = () => {
         setUploading(true);
 
         try {
-            const res = await fetch('/api/upload', {
+            const res = await fetch(`${API_BASE_URL}/api/upload`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${user.token}` },
                 body: formData,
             });
             const data = await res.json();
             if (res.ok) {
-                setAvatar(`http://localhost:5000${data.imageUrl}`);
+                setAvatar(`${API_BASE_URL}${data.imageUrl}`);
             } else {
                 setMessage({ type: 'error', text: data.message || 'Error uploading image' });
             }
@@ -74,7 +75,7 @@ const ProfilePage = () => {
         e.preventDefault();
         setMessage({ type: '', text: '' });
         try {
-            const res = await fetch('/api/auth/profile', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ const ProfilePage = () => {
                         <div className="relative group">
                             <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                                 {avatar ? (
-                                    <img src={avatar.startsWith('/') ? `http://localhost:5000${avatar}` : avatar} alt="Avatar" className="w-full h-full object-cover" />
+                                    <img src={avatar.startsWith('/') ? `${API_BASE_URL}${avatar}` : avatar} alt="Avatar" className="w-full h-full object-cover" />
                                 ) : (
                                     <svg className="w-16 h-16 text-gray-300" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                                 )}

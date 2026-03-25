@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
+import API_BASE_URL from '../config/apiConfig';
 
 const CheckoutPage = () => {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ const CheckoutPage = () => {
 
         const fetchWallet = async () => {
             try {
-                const walRes = await fetch('/api/wallet', {
+                const walRes = await fetch(`${API_BASE_URL}/api/wallet`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
                 const walData = await walRes.json();
@@ -52,7 +53,7 @@ const CheckoutPage = () => {
         try {
             // Process each item in the cart sequentially
             for (const item of cartItems) {
-                const res = await fetch(`/api/wallet/purchase/${item.product._id}`, {
+                const res = await fetch(`${API_BASE_URL}/api/wallet/purchase/${item.product._id}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

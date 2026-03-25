@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import API_BASE_URL from '../config/apiConfig';
 
 const ReportsDashboard = () => {
     const { user } = useContext(AuthContext);
@@ -9,7 +10,7 @@ const ReportsDashboard = () => {
     useEffect(() => {
         const fetchReports = async () => {
             try {
-                const res = await fetch('/api/reports/overview', {
+                const res = await fetch(`${API_BASE_URL}/api/reports/overview`, {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
 

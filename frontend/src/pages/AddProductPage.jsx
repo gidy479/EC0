@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../config/apiConfig';
 
 const AddProductPage = () => {
     const { user } = useContext(AuthContext);
@@ -22,7 +23,7 @@ const AddProductPage = () => {
         formData.append('image', file);
         setUploadingImage(true);
         try {
-            const res = await fetch('/api/upload', {
+            const res = await fetch(`${API_BASE_URL}/api/upload`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${user.token}`,
@@ -33,7 +34,7 @@ const AddProductPage = () => {
             if (!res.ok) throw new Error(data.message);
 
             // Adjust path for full URL if needed, but backend gives e.g., /uploads/...
-            setImage(`http://localhost:5000${data.imageUrl}`);
+            setImage(`${API_BASE_URL}${data.imageUrl}`);
         } catch (error) {
             alert('Error uploading image: ' + error.message);
         } finally {
@@ -62,7 +63,7 @@ const AddProductPage = () => {
 
         try {
             // 1. Create Product
-            const prodRes = await fetch('/api/products', {
+            const prodRes = await fetch(`${API_BASE_URL}/api/products`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,7 +84,7 @@ const AddProductPage = () => {
             if (!prodRes.ok) throw new Error(productData.message);
 
             // 2. Trigger AI Verification
-            const verRes = await fetch(`/api/verify/${productData._id}`, {
+            const verRes = await fetch(`${API_BASE_URL}/api/verify/${productData._id}`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${user.token}`

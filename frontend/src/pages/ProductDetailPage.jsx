@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
+import API_BASE_URL from '../config/apiConfig';
 
 const ProductDetailPage = () => {
     const { id } = useParams();
@@ -24,7 +25,7 @@ const ProductDetailPage = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`/api/products/${id}`);
+                const res = await fetch(`${API_BASE_URL}/api/products/${id}`);
                 const data = await res.json();
                 if (res.ok) {
                     setProduct(data);
@@ -48,7 +49,7 @@ const ProductDetailPage = () => {
         e.preventDefault();
         setReviewError('');
         try {
-            const res = await fetch(`/api/products/${id}/reviews`, {
+            const res = await fetch(`${API_BASE_URL}/api/products/${id}/reviews`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
