@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Wallet = require('../models/Wallet');
 const jwt = require('jsonwebtoken');
 const { protect } = require('../middleware/authMiddleware');
+const sendEmail = require('../utils/sendEmail');
 
 // Generate JWT
 const generateToken = (id) => {
@@ -35,6 +36,32 @@ router.post('/register', async (req, res) => {
         if (user) {
             // Create a wallet for the user automatically
             const wallet = await Wallet.create({ user: user._id, balance: 0 });
+
+            // Send Welcome Email
+            try {
+                await sendEmail({
+                    to: user.email,
+                    subject: 'Welcome to EcoMarket Plus! 🌱',
+                    text: `Hello ${user.name},\n\nWelcome to EcoMarket Plus! Your account has been successfully created as a ${user.role}.\n\nYour digital wallet is now active and ready for your first sustainable transaction.\n\nHappy Shopping!\nThe EcoMarket Team`,
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+                            <h2 style="color: #27ae60;">Welcome to EcoMarket Plus! 🌱</h2>
+                            <p>Hello <strong>${user.name}</strong>,</p>
+                            <p>We're thrilled to have you join our sustainable community! Your account has been successfully created as a <strong>${user.role}</strong>.</p>
+                            <p>Your digital wallet is now active and ready for your first eco-friendly transaction.</p>
+                            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                                <p style="margin: 0;"><strong>Role:</strong> ${user.role}</p>
+                                <p style="margin: 0;"><strong>Status:</strong> Active</p>
+                            </div>
+                            <p>Visit your dashboard to start exploring!</p>
+                            <p>Best regards,<br><strong>The EcoMarket Team</strong></p>
+                        </div>
+                    `
+                });
+            } catch (emailError) {
+                console.error('Error sending welcome email:', emailError);
+                // We don't block registration if email fails
+            }
 
             res.status(201).json({
                 _id: user._id,
