@@ -39,7 +39,7 @@ router.post('/', protect, upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No image provided' });
     }
-    res.json({ imageUrl: `/${req.file.path.replace(/\\/g, '/')}` });
+    res.json({ imageUrl: `/uploads/${req.file.filename}` });
 });
 
 module.exports = router;
