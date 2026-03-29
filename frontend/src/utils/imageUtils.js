@@ -42,9 +42,10 @@ export const getSafeImageUrl = (url) => {
   }
 
   // Otherwise, fallback to prepending API_BASE_URL if it's a relative path
+  const base = API_BASE_URL || window.location.origin;
   if (normalizedUrl.startsWith('/')) {
-    return `${API_BASE_URL}${normalizedUrl}`;
+    return `${base}${normalizedUrl}`;
   }
 
-  return `${API_BASE_URL}/${normalizedUrl}`;
+  return `${base}/${normalizedUrl}`;
 };

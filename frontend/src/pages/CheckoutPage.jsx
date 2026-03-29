@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import API_BASE_URL from '../config/apiConfig';
+import { getSafeImageUrl } from '../utils/imageUtils';
 
 const CheckoutPage = () => {
     const navigate = useNavigate();
@@ -101,7 +102,7 @@ const CheckoutPage = () => {
                             {cartItems.map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-4">
                                     {item.product.images?.[0] ? (
-                                        <img src={item.product.images[0]} alt={item.product.name} className="w-10 h-10 md:w-12 md:h-12 rounded-xl object-cover" />
+                                        <img src={getSafeImageUrl(item.product.images[0])} alt={item.product.name} className="w-10 h-10 md:w-12 md:h-12 rounded-xl object-cover" />
                                     ) : (
                                         <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-200 rounded-xl"></div>
                                     )}
