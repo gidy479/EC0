@@ -11,18 +11,40 @@ import API_BASE_URL from '../config/apiConfig';
 export const getSafeImageUrl = (url) => {
   if (!url) return null;
 
-  // If it starts with /uploads, it's a relative path from the backend
-  if (url.startsWith('/uploads')) {
-    return `${API_BASE_URL}${url}`;
-  }
+  // Normalize backslashes from Windows-style paths to forward slashes
+  let normalizedUrl = url.replace(/\\/g, '/');
 
   // If it's a full URL pointing to localhost, replace it with the current API_BASE_URL
-  // This helps when the database has hardcoded localhost URLs from previous dev runs
-  if (url.includes('://localhost:5000')) {
-    const relativePath = url.split('://localhost:5000')[1];
+  // We do this first in case it's like http://localhost:5000/uploads/...
+  if (normalizedUrl.includes('://localhost:5000')) {
+    const relativePath = normalizedUrl.split('://localhost:5000')[1];
     return `${API_BASE_URL}${relativePath}`;
   }
 
-  // Otherwise, return the URL as is (might be a Cloudinary/S3 link or already correct)
-  return url;
+  // If it already starts with http/https, return it as is (if not localhost)
+  if (normalizedUrl.startsWith('http')) {
+    return normalizedUrl;
+  }
+
+  // If it starts with /uploads, prepend API_BASE_URL
+  if (normalizedUrl.startsWith('/uploads')) {
+    return `${API_BASE_URL}${normalizedUrl}`;
+  }
+
+  // If it starts with uploads (no leading slash), prepend API_BASE_URL and a slash
+  if (normalizedUrl.startsWith('uploads/')) {
+    return `${API_BASE_URL}/${normalizedUrl}`;
+  }
+
+  // If it's just a filename (no slash, no uploads), assume it's in /uploads/
+  if (!normalizedUrl.includes('/')) {
+    return `${API_BASE_URL}/uploads/${normalizedUrl}`;
+  }
+
+  // Otherwise, fallback to prepending API_BASE_URL if it's a relative path
+  if (normalizedUrl.startsWith('/')) {
+    return `${API_BASE_URL}${normalizedUrl}`;
+  }
+
+  return `${API_BASE_URL}/${normalizedUrl}`;
 };
