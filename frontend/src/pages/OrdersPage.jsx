@@ -72,11 +72,20 @@ const OrdersPage = () => {
                         <div key={order._id} className="glass p-5 md:p-6 rounded-3xl shadow-sm flex flex-col sm:flex-row gap-6 relative overflow-hidden group border border-white/40">
                             <div className="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-green-50/50 to-transparent pointer-events-none"></div>
 
-                            <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 bg-white rounded-2xl overflow-hidden self-center sm:self-start border border-gray-100 shadow-inner">
+                            <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 bg-white rounded-2xl overflow-hidden self-center sm:self-start border border-gray-100 shadow-inner flex items-center justify-center">
                                 {order.product?.images?.[0] ? (
-                                    <img src={getSafeImageUrl(order.product.images[0])} alt={order.product.name} className="w-full h-full object-cover" />
+                                    <img 
+                                        src={getSafeImageUrl(order.product.images[0])} 
+                                        alt={order.product.name} 
+                                        className="w-full h-full object-cover" 
+                                        onError={(e) => {
+                                            e.target.onerror = null; 
+                                            e.target.src = 'https://placehold.co/200x200?text=EcoMarket';
+                                            e.target.className = "w-1/2 h-1/2 object-contain opacity-20";
+                                        }}
+                                    />
                                 ) : (
-                                    <div className="w-full h-full bg-gray-100"></div>
+                                    <svg className="w-8 h-8 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                 )}
                             </div>
 
@@ -84,7 +93,9 @@ const OrdersPage = () => {
                             <div className="flex-grow flex flex-col justify-center relative z-10">
                                 <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-2 gap-3">
                                     <div>
-                                        <h3 className="text-base md:text-lg font-black text-gray-800 leading-tight">{order.product?.name || 'Product'}</h3>
+                                        <h3 className="text-base md:text-lg font-black text-gray-800 leading-tight">
+                                            {order.product?.name || <span className="text-gray-400 italic font-medium">Product no longer available</span>}
+                                        </h3>
                                         <p className="text-[10px] text-gray-400 font-black tracking-widest uppercase mt-1">Order #{order._id.substring(0, 8).toUpperCase()}</p>
                                     </div>
                                     <div className="w-fit">

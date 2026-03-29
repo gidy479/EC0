@@ -1,7 +1,9 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const Product = require('./models/Product');
-const User = require('./models/User'); // Keep in mind we need a user to act as seller
+const User = require('./models/User');
+const Order = require('./models/Order');
+const Transaction = require('./models/Transaction');
 const connectDB = require('./config/db');
 
 const products = [
@@ -88,8 +90,10 @@ const seedProducts = async () => {
         // Attach seller ID to products and insert
         const productsToInsert = products.map(p => ({ ...p, seller: targetSeller._id }));
 
-        console.log("Clearing old products...");
+        console.log("Clearing old products, orders, and transactions...");
         await Product.deleteMany({});
+        await Order.deleteMany({});
+        await Transaction.deleteMany({});
 
         await Product.insertMany(productsToInsert);
         console.log("Successfully seeded 10 Ghanaian products!");
