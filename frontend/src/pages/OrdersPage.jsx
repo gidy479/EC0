@@ -111,8 +111,14 @@ const OrdersPage = () => {
                                         <span className="font-black text-gray-600 truncate">{order.seller?.name || 'Unknown'}</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-gray-400 font-black uppercase tracking-tighter">Status</span>
-                                        <span className={`font-black uppercase truncate ${order.transaction?.status === 'disputed' ? 'text-red-600' : 'text-blue-700'}`}>{order.transaction?.status?.replace('_', ' ') || 'UNKNOWN'}</span>
+                                        <span className="text-gray-400 font-black uppercase tracking-tighter">Payment Status</span>
+                                        <span className={`font-black uppercase truncate ${order.transaction?.status === 'disputed' ? 'text-red-600' : 'text-blue-700'}`}>
+                                            {order.transaction?.status === 'escrow_held' ? 'Payment Secured' :
+                                             order.transaction?.status === 'released_to_seller' ? 'Payment Finalized' :
+                                             order.transaction?.status === 'disputed' ? 'In Dispute' :
+                                             order.transaction?.status === 'refunded' ? 'Refunded' :
+                                             (order.transaction?.status ? order.transaction.status.replace('_', ' ') : 'Processing')}
+                                        </span>
                                     </div>
                                 </div>
 

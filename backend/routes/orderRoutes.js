@@ -11,6 +11,7 @@ router.get('/', protect, async (req, res) => {
         const orders = await Order.find({ buyer: req.user._id })
             .populate('product', 'name images price')
             .populate('seller', 'name')
+            .populate('transaction')
             .sort({ createdAt: -1 });
 
         res.json(orders);
@@ -26,7 +27,8 @@ router.get('/seller', protect, async (req, res) => {
     try {
         const orders = await Order.find({ seller: req.user._id })
             .populate('product', 'name price')
-            .populate('buyer', 'name email ')
+            .populate('buyer', 'name email')
+            .populate('transaction')
             .sort({ createdAt: -1 });
 
         res.json(orders);

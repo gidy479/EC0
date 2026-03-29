@@ -69,13 +69,17 @@ const seedProducts = async () => {
         let targetSeller = await User.findOne({ role: 'Seller' });
 
         if (!targetSeller) {
-            console.log("No Seller found. Creating a dummy Merchant...");
+            console.log("No Seller found. Creating Green Solutions Merchant...");
             targetSeller = new User({
-                name: "Ghana Eco Farms",
-                email: "farm@ghanaeco.com",
-                password: "password123", // Assuming plain text or hashed doesn't matter for this seed if not logging in as them
+                name: "Green Solutions",
+                email: "info@greensolutions.com",
+                password: "password123",
                 role: "Seller"
             });
+            await targetSeller.save();
+        } else {
+            console.log("Updating existing Seller name to Green Solutions...");
+            targetSeller.name = "Green Solutions";
             await targetSeller.save();
         }
 
