@@ -189,16 +189,44 @@ router.post('/purchase/:id', protect, async (req, res) => {
         // Asynchronously Fire Buyer Transaction Email
         sendEmail({
             to: req.user.email,
-            subject: `Order Confirmation - ${product.name}`,
-            text: `Thank you for your trust! Your purchase of ${quantity}x ${product.name} (Order #${newOrder._id}) is confirmed and funds are securely held in escrow until delivery. Total Paid: GH₵${totalCost.toFixed(2)}. Delivery Address: ${address}, ${city}. \n\nWe will notify you the moment it ships!`,
+            subject: `Order Confirmation - ${product.name} (Order #${newOrder._id.toString().substring(0,8).toUpperCase()})`,
+            text: `Thank you for your trust! Your purchase of ${quantity}x ${product.name} is confirmed. Total: GH₵${totalCost.toFixed(2)}. Delivery to ${address}, ${city}.`,
             html: `
-                <h3>Order Confirmed! 🎉</h3>
-                <p>Thank you for your trust! Your purchase of <strong>${quantity}x ${product.name}</strong> is confirmed.</p>
-                <p><strong>Order ID:</strong> ${newOrder._id}</p>
-                <p><strong>Total Paid:</strong> GH₵${totalCost.toFixed(2)} (Securely held in Escrow)</p>
-                <p><strong>Delivery Details:</strong> ${address}, ${city}</p>
-                <br>
-                <p><em>We will alert you the moment the seller ships your items!</em></p>
+                <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden;">
+                    <div style="background-color: #27ae60; padding: 30px; text-align: center; color: white;">
+                        <h2 style="margin: 0; font-size: 24px;">Order Confirmed! 🎉</h2>
+                        <p style="margin: 10px 0 0; opacity: 0.9;">Thank you for shopping sustainably with EcoMarket Plus.</p>
+                    </div>
+                    
+                    <div style="padding: 25px;">
+                        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                            <h3 style="margin-top: 0; color: #27ae60; font-size: 18px; border-bottom: 2px solid #27ae60; padding-bottom: 8px;">Order Summary</h3>
+                            <p style="margin: 12px 0;"><strong>Order ID:</strong> <span style="font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px;">#${newOrder._id.toString().toUpperCase()}</span></p>
+                            <p style="margin: 12px 0;"><strong>Product:</strong> ${product.name}</p>
+                            <p style="margin: 12px 0;"><strong>Quantity:</strong> ${quantity}</p>
+                            <p style="margin: 12px 0; font-size: 18px; color: #2ecc71;"><strong>Total Paid:</strong> GH₵${totalCost.toFixed(2)}</p>
+                            <p style="margin: 0; font-size: 13px; color: #7f8c8d;">(Funds are securely held in Escrow until delivery)</p>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="margin-top: 0; font-size: 18px; color: #27ae60;">Delivery Information</h3>
+                            <p style="margin: 8px 0;"><strong>Address:</strong> ${address}</p>
+                            <p style="margin: 8px 0;"><strong>City:</strong> ${city}</p>
+                            <p style="margin: 8px 0;"><strong>Phone:</strong> ${phone}</p>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
+                        
+                        <div style="text-align: center;">
+                            <p style="margin-bottom: 20px;">The seller has been notified and will begin preparing your order.</p>
+                            <a href="${process.env.FRONTEND_URL}/orders" style="background-color: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Track Your Order</a>
+                        </div>
+                    </div>
+
+                    <div style="background-color: #f4f7f6; padding: 20px; text-align: center; font-size: 12px; color: #95a5a6;">
+                        <p style="margin: 0;">&copy; 2024 EcoMarket Plus. Growing Sustainably Together.</p>
+                    </div>
+                </div>
             `
         });
 
@@ -207,8 +235,48 @@ router.post('/purchase/:id', protect, async (req, res) => {
         if (sellerUser) {
             sendEmail({
                 to: sellerUser.email,
-                subject: `SALE ALERT: You sold ${product.name}!`,
-                html: `<h3>Great News!</h3><p>You just sold <strong>${quantity}x ${product.name}</strong> for GH₵${totalCost.toFixed(2)}.</p><p>Please prepare to ship to: <strong>${address}, ${city}</strong>.</p>`
+                subject: `SALE ALERT: Order Received for ${product.name}!`,
+                html: `
+                    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden;">
+                        <div style="background-color: #f39c12; padding: 30px; text-align: center; color: white;">
+                            <h2 style="margin: 0; font-size: 24px;">New Sale! 💸</h2>
+                            <p style="margin: 10px 0 0; opacity: 0.9;">You just received a new order for your product.</p>
+                        </div>
+                        
+                        <div style="padding: 25px;">
+                            <div style="background-color: #fdfaf5; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #f39c12;">
+                                <h3 style="margin-top: 0; color: #d35400; font-size: 18px;">Sale Details</h3>
+                                <p style="margin: 10px 0;"><strong>Order ID:</strong> <span style="font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px;">#${newOrder._id.toString().toUpperCase()}</span></p>
+                                <p style="margin: 10px 0;"><strong>Product:</strong> ${product.name}</p>
+                                <p style="margin: 10px 0;"><strong>Quantity:</strong> ${quantity}</p>
+                                <p style="margin: 10px 0; font-size: 18px; color: #e67e22;"><strong>Earnings:</strong> GH₵${totalCost.toFixed(2)}</p>
+                                <p style="margin: 0; font-size: 13px; color: #7f8c8d;">(Funds will be released after the buyer confirms delivery)</p>
+                            </div>
+
+                            <div style="margin-bottom: 25px;">
+                                <h3 style="margin-top: 0; font-size: 18px; color: #d35400;">Ship To:</h3>
+                                <p style="margin: 8px 0;"><strong>Buyer Name:</strong> ${req.user.name}</p>
+                                <p style="margin: 8px 0;"><strong>Address:</strong> ${address}</p>
+                                <p style="margin: 8px 0;"><strong>City:</strong> ${city}</p>
+                                <p style="margin: 8px 0;"><strong>Phone:</strong> ${phone}</p>
+                            </div>
+
+                            <div style="padding: 15px; background: #fff9ed; border-radius: 6px; font-size: 14px; border: 1px dashed #f39c12;">
+                                <strong>💡 Next Step:</strong> Please pack the item securely and ship it immediately. Once shipped, update the order status in your seller dashboard.
+                            </div>
+
+                            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
+                            
+                            <div style="text-align: center;">
+                                <a href="${process.env.FRONTEND_URL}/dashboard" style="background-color: #f39c12; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Manage This Order</a>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #f4f7f6; padding: 20px; text-align: center; font-size: 12px; color: #95a5a6;">
+                            <p style="margin: 0;">Keep up the great work selling sustainable products!</p>
+                        </div>
+                    </div>
+                `
             });
         }
 
