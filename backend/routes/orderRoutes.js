@@ -16,7 +16,8 @@ router.get('/', protect, async (req, res) => {
             .populate('transaction')
             .sort({ createdAt: -1 });
 
-        res.json(orders);
+        const filteredOrders = orders.filter(o => o.product);
+        res.json(filteredOrders);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -33,7 +34,8 @@ router.get('/seller', protect, async (req, res) => {
             .populate('transaction')
             .sort({ createdAt: -1 });
 
-        res.json(orders);
+        const filteredOrders = orders.filter(o => o.product);
+        res.json(filteredOrders);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
