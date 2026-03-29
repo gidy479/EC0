@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import API_BASE_URL from '../config/apiConfig';
+import { getSafeImageUrl } from '../utils/imageUtils';
+
 
 const OrdersPage = () => {
     const { user } = useContext(AuthContext);
@@ -72,11 +74,12 @@ const OrdersPage = () => {
 
                             <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 bg-white rounded-2xl overflow-hidden self-center sm:self-start border border-gray-100 shadow-inner">
                                 {order.product?.images?.[0] ? (
-                                    <img src={order.product.images[0]} alt={order.product.name} className="w-full h-full object-cover" />
+                                    <img src={getSafeImageUrl(order.product.images[0])} alt={order.product.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full bg-gray-100"></div>
                                 )}
                             </div>
+
 
                             <div className="flex-grow flex flex-col justify-center relative z-10">
                                 <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-2 gap-3">
