@@ -5,6 +5,7 @@ const Wallet = require('../models/Wallet');
 const Product = require('../models/Product');
 const Transaction = require('../models/Transaction');
 const Order = require('../models/Order');
+const Withdrawal = require('../models/Withdrawal');
 const sendEmail = require('../utils/sendEmail');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -314,6 +315,90 @@ router.put('/resolve/:orderId', protect, admin, async (req, res) => {
         }
 
         res.json({ message: `Dispute resolved: ${resolution}`, transaction });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// @desc    Request a withdrawal
+// @route   POST /api/wallet/withdraw
+// @access  Private
+router.post('/withdraw', protect, async (req, res) => {
+    try {
+        const { amount, method, accountDetails } = req.body;
+        const wallet = await Wallet.findOne({ user: req.user._id });
+
+        if (!wallet || wallet.balance < amount) {
+            return res.status(400).json({ message: 'Insufficient balance' });
+        }
+
+        // Deduct balance immediately (move to "pending withdrawal")
+        wallet.balance -= amount;
+        wallet.transactions.push({
+            type: 'withdrawal',
+            amount,
+            description: `Withdrawal request (${method}) - Pending`
+        });
+        await wallet.save();
+
+        const withdrawal = await Withdrawal.create({
+            user: req.user._id,
+            amount,
+            method,
+            accountDetails
+        });
+
+        res.status(201).json(withdrawal);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// @desc    Get user withdrawal history
+// @route   GET /api/wallet/withdrawals
+// @access  Private
+router.get('/withdrawals', protect, async (req, res) => {
+    try {
+        const withdrawals = await Withdrawal.find({ user: req.user._id }).sort({ createdAt: -1 });
+        res.json(withdrawals);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// @desc    Update withdrawal status (Admin)
+// @route   PUT /api/wallet/withdrawals/:id/status
+// @access  Private/Admin
+router.put('/withdrawals/:id/status', protect, admin, async (req, res) => {
+    try {
+        const { status } = req.body;
+        const withdrawal = await Withdrawal.findById(req.params.id);
+
+        if (!withdrawal) {
+            return res.status(404).json({ message: 'Withdrawal request not found' });
+        }
+
+        if (withdrawal.status !== 'pending') {
+            return res.status(400).json({ message: 'Request already processed' });
+        }
+
+        withdrawal.status = status;
+        withdrawal.processedAt = Date.now();
+        await withdrawal.save();
+
+        // If rejected, refund the wallet
+        if (status === 'rejected') {
+            const wallet = await Wallet.findOne({ user: withdrawal.user });
+            wallet.balance += withdrawal.amount;
+            wallet.transactions.push({
+                type: 'deposit',
+                amount: withdrawal.amount,
+                description: `Refund for rejected withdrawal request #${withdrawal._id.toString().substring(0,8).toUpperCase()}`
+            });
+            await wallet.save();
+        }
+
+        res.json(withdrawal);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

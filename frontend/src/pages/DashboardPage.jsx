@@ -10,8 +10,13 @@ const DashboardPage = () => {
     const [loading, setLoading] = useState(true);
     const [earnings, setEarnings] = useState(0);
     const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+    const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
     const [depositAmount, setDepositAmount] = useState('');
+    const [withdrawalAmount, setWithdrawalAmount] = useState('');
+    const [withdrawalMethod, setWithdrawalMethod] = useState('MoMo');
+    const [withdrawalDetails, setWithdrawalDetails] = useState({ phone: '', network: 'MTN', accountName: '', accountNumber: '', bankName: '' });
     const [isProcessingDeposit, setIsProcessingDeposit] = useState(false);
+    const [isProcessingWithdrawal, setIsProcessingWithdrawal] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -147,6 +152,45 @@ const DashboardPage = () => {
         handler.openIframe();
     };
 
+    const handleWithdrawSubmit = async (e) => {
+        e.preventDefault();
+        if (!withdrawalAmount || isNaN(withdrawalAmount) || Number(withdrawalAmount) <= 0) return;
+        if (Number(withdrawalAmount) > (wallet?.balance || 0)) {
+            alert('Insufficient balance');
+            return;
+        }
+
+        setIsProcessingWithdrawal(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/wallet/withdraw`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`
+                },
+                body: JSON.stringify({
+                    amount: Number(withdrawalAmount),
+                    method: withdrawalMethod,
+                    accountDetails: withdrawalDetails
+                })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert('Withdrawal request submitted successfully! Your balance has been updated while we process your request.');
+                setWallet({ ...wallet, balance: wallet.balance - Number(withdrawalAmount) });
+                setIsWithdrawModalOpen(false);
+                setWithdrawalAmount('');
+            } else {
+                alert(data.message || 'Withdrawal failed');
+            }
+        } catch (error) {
+            alert('Network error during withdrawal');
+        } finally {
+            setIsProcessingWithdrawal(false);
+        }
+    };
+
     return (
         <div className="animate-fade-in-up px-4 sm:px-0">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 pb-4 border-b border-gray-200/50 gap-4">
@@ -247,13 +291,22 @@ const DashboardPage = () => {
                                 </p>
                             </div>
                             <div className="w-full sm:w-auto">
-                                <button
-                                    onClick={() => setIsDepositModalOpen(true)}
-                                    className="w-full sm:w-auto bg-white/20 hover:bg-white text-white hover:text-green-900 px-6 py-4 rounded-2xl font-black uppercase tracking-wide text-sm transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg flex items-center justify-center transform active:scale-95 sm:hover:-translate-y-1"
-                                >
-                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                                    Add Funds
-                                </button>
+                                <div className="flex flex-col sm:flex-row gap-3">
+                                    <button
+                                        onClick={() => setIsDepositModalOpen(true)}
+                                        className="w-full sm:w-auto bg-white/20 hover:bg-white text-white hover:text-green-900 px-6 py-3 rounded-2xl font-black uppercase tracking-wide text-xs transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg flex items-center justify-center transform active:scale-95"
+                                    >
+                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                                        Add Funds
+                                    </button>
+                                    <button
+                                        onClick={() => setIsWithdrawModalOpen(true)}
+                                        className="w-full sm:w-auto bg-green-400/20 hover:bg-green-400 text-white px-6 py-3 rounded-2xl font-black uppercase tracking-wide text-xs transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg flex items-center justify-center transform active:scale-95"
+                                    >
+                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z" /></svg>
+                                        Withdraw
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -323,6 +376,136 @@ const DashboardPage = () => {
                                     ) : 'Proceed'}
                                 </button>
                             </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Withdraw Modal */}
+            {isWithdrawModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white/95 glass p-6 md:p-8 rounded-3xl w-full max-w-lg shadow-2xl relative max-h-[90vh] overflow-y-auto">
+                        <button onClick={() => setIsWithdrawModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                        
+                        <h3 className="text-2xl font-bold text-gray-800 mb-2 flex items-center">
+                            <svg className="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            Withdraw Funds
+                        </h3>
+                        <p className="text-xs text-gray-500 mb-6 font-medium">Your request will be processed within 24 hours.</p>
+
+                        <form onSubmit={handleWithdrawSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5 tracking-wider">Method</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setWithdrawalMethod('MoMo')}
+                                        className={`py-3 rounded-xl border font-bold text-sm transition-all ${withdrawalMethod === 'MoMo' ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-white border-gray-200 text-gray-500'}`}
+                                    >
+                                        Mobile Money
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setWithdrawalMethod('Bank')}
+                                        className={`py-3 rounded-xl border font-bold text-sm transition-all ${withdrawalMethod === 'Bank' ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-white border-gray-200 text-gray-500'}`}
+                                    >
+                                        Bank Transfer
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5 tracking-wider">Amount (GH₵)</label>
+                                <input
+                                    type="number"
+                                    max={wallet?.balance || 0}
+                                    required
+                                    value={withdrawalAmount}
+                                    onChange={(e) => setWithdrawalAmount(e.target.value)}
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-lg"
+                                    placeholder="0.00"
+                                />
+                            </div>
+
+                            {withdrawalMethod === 'MoMo' ? (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5 tracking-wider">MoMo Number</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={withdrawalDetails.phone}
+                                            onChange={(e) => setWithdrawalDetails({ ...withdrawalDetails, phone: e.target.value })}
+                                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold"
+                                            placeholder="024XXXXXXX"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5 tracking-wider">Network</label>
+                                        <select
+                                            value={withdrawalDetails.network}
+                                            onChange={(e) => setWithdrawalDetails({ ...withdrawalDetails, network: e.target.value })}
+                                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold"
+                                        >
+                                            <option>MTN</option>
+                                            <option>Telecel</option>
+                                            <option>AT</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5 tracking-wider">Account Name</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={withdrawalDetails.accountName}
+                                            onChange={(e) => setWithdrawalDetails({ ...withdrawalDetails, accountName: e.target.value })}
+                                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold"
+                                            placeholder="John Doe"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5 tracking-wider">Account Number</label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={withdrawalDetails.accountNumber}
+                                                onChange={(e) => setWithdrawalDetails({ ...withdrawalDetails, accountNumber: e.target.value })}
+                                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase text-gray-400 mb-1.5 tracking-wider">Bank Name</label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={withdrawalDetails.bankName}
+                                                onChange={(e) => setWithdrawalDetails({ ...withdrawalDetails, bankName: e.target.value })}
+                                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold"
+                                                placeholder="GCB, Ecobank, etc"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <button
+                                type="submit"
+                                disabled={isProcessingWithdrawal}
+                                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center h-14"
+                            >
+                                {isProcessingWithdrawal ? (
+                                    <svg className="animate-spin h-6 w-6 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                ) : 'Request Withdrawal'}
+                            </button>
                         </form>
                     </div>
                 </div>

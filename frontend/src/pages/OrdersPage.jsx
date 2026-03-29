@@ -123,8 +123,36 @@ const OrdersPage = () => {
                                 </div>
 
                                 {order.transaction?.status === 'escrow_held' && (
-                                    <div className="mt-6 pt-4 border-t border-gray-100/50 flex justify-end">
-                                        <button onClick={() => disputeOrderHandler(order._id)} className="w-full sm:w-auto text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-tighter transition active:scale-95">
+                                    <div className="mt-6 pt-4 border-t border-gray-100/50 flex justify-end gap-3">
+                                        {order.trackingStatus === 'Shipped' && (
+                                            <button 
+                                                onClick={async () => {
+                                                    if (window.confirm('Have you received your items? This will release the payment to the merchant.')) {
+                                                        try {
+                                                            const res = await fetch(`${API_BASE_URL}/api/orders/${order._id}/tracking`, {
+                                                                method: 'PUT',
+                                                                headers: {
+                                                                    'Content-Type': 'application/json',
+                                                                    Authorization: `Bearer ${user.token}`
+                                                                },
+                                                                body: JSON.stringify({ trackingStatus: 'Delivered' })
+                                                            });
+                                                            if (res.ok) {
+                                                                window.location.reload();
+                                                            } else {
+                                                                alert('Failed to confirm receipt');
+                                                            }
+                                                        } catch (e) {
+                                                            alert('Error updating status');
+                                                        }
+                                                    }
+                                                }}
+                                                className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-tighter transition active:scale-95 shadow-lg shadow-green-200"
+                                            >
+                                                Confirm Receipt
+                                            </button>
+                                        )}
+                                        <button onClick={() => disputeOrderHandler(order._id)} className="flex-1 sm:flex-none text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-tighter transition active:scale-95">
                                             Dispute Order
                                         </button>
                                     </div>
