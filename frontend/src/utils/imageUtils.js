@@ -14,38 +14,26 @@ export const getSafeImageUrl = (url) => {
   // Normalize backslashes from Windows-style paths to forward slashes
   let normalizedUrl = url.replace(/\\/g, '/');
 
-  // If it's a full URL pointing to localhost, replace it with the current API_BASE_URL
-  // We do this first in case it's like http://localhost:5000/uploads/...
-  if (normalizedUrl.includes('://localhost:5000')) {
-    const relativePath = normalizedUrl.split('://localhost:5000')[1];
-    return `${API_BASE_URL}${relativePath}`;
-  }
-
   // If it already starts with http/https, return it as is (if not localhost)
-  if (normalizedUrl.startsWith('http')) {
+  if (normalizedUrl.startsWith('http') && !normalizedUrl.includes('localhost:5000')) {
     return normalizedUrl;
   }
 
-  // If it starts with /uploads, prepend API_BASE_URL
-  if (normalizedUrl.startsWith('/uploads')) {
-    return `${API_BASE_URL}${normalizedUrl}`;
+  // Normalize leading slash for relative paths that aren't full URLs
+  let finalPath = normalizedUrl;
+  if (finalPath.includes('://localhost:5000')) {
+    finalPath = finalPath.split('://localhost:5000')[1];
   }
 
-  // If it starts with uploads (no leading slash), prepend API_BASE_URL and a slash
-  if (normalizedUrl.startsWith('uploads/')) {
-    return `${API_BASE_URL}/${normalizedUrl}`;
+  // Prepend API_BASE_URL if it's a relative path
+  let base = API_BASE_URL;
+  if (!base || base === window.location.origin) {
+    base = (import.meta.env.MODE === 'development' ? 'http://localhost:5000' : window.location.origin);
   }
 
-  // If it's just a filename (no slash, no uploads), assume it's in /uploads/
-  if (!normalizedUrl.includes('/')) {
-    return `${API_BASE_URL}/uploads/${normalizedUrl}`;
-  }
+  // Ensure trailing slash on base and avoid double slashes in result
+  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const cleanPath = finalPath.startsWith('/') ? finalPath : `/${finalPath}`;
 
-  // Otherwise, fallback to prepending API_BASE_URL if it's a relative path
-  const base = API_BASE_URL || window.location.origin;
-  if (normalizedUrl.startsWith('/')) {
-    return `${base}${normalizedUrl}`;
-  }
-
-  return `${base}/${normalizedUrl}`;
+  return `${cleanBase}${cleanPath}`;
 };
