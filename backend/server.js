@@ -41,7 +41,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure uploads directory exists
-const uploadsPath = path.join(__dirname, '/uploads');
+const uploadsPath = path.resolve(__dirname, 'uploads');
 if (!fs.existsSync(uploadsPath)) {
     fs.mkdirSync(uploadsPath, { recursive: true });
 }
@@ -68,6 +68,15 @@ if (process.env.NODE_ENV === 'production') {
         res.json({ status: 'API is running...' });
     });
 }
+
+// Global Error Handler (ensure JSON response)
+app.use((err, req, res, next) => {
+    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    res.status(statusCode).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === 'production' ? null : err.stack,
+    });
+});
 
 // Connect to database and start server
 const startServer = async () => {

@@ -31,8 +31,15 @@ const AddProductPage = () => {
                 },
                 body: formData,
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
+            const contentType = res.headers.get('content-type');
+            let data;
+            if (contentType && contentType.includes('application/json')) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+            }
+            if (!res.ok) throw new Error(data.message || 'Upload failed');
 
             // Save only the relative path (e.g., /uploads/...) returned by the backend
             // Our getSafeImageUrl utility will handle prepending API_BASE_URL on display
