@@ -158,6 +158,14 @@ const DashboardPage = () => {
                     >
                         My Orders
                     </button>
+                    {user.role === 'Seller' && (
+                        <button
+                            onClick={() => navigate('/sales')}
+                            className="flex-1 sm:flex-none glass border-indigo-200 text-indigo-700 px-4 md:px-5 py-2.5 rounded-xl font-bold hover:bg-indigo-50 transition shadow-sm text-sm"
+                        >
+                            My Sales
+                        </button>
+                    )}
                     <button
                         onClick={handleLogout}
                         className="flex-1 sm:flex-none glass border-red-200 text-red-600 px-4 md:px-5 py-2.5 rounded-xl font-bold hover:bg-red-50 transition shadow-sm text-sm"

@@ -13,6 +13,7 @@ import ReportsDashboard from './pages/ReportsDashboard';
 import ProfilePage from './pages/ProfilePage';
 import CartPage from './pages/CartPage';
 import AdminDashboard from './pages/AdminDashboard';
+import SalesPage from './pages/SalesPage';
 import { CartProvider, CartContext } from './context/CartContext';
 
 function Navbar() {
@@ -41,7 +42,10 @@ function Navbar() {
           {user ? (
             <>
               {user.role === 'Seller' && (
-                <Link to="/add-product" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Add Product</Link>
+                <>
+                  <Link to="/add-product" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Add Product</Link>
+                  <Link to="/sales" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">My Sales</Link>
+                </>
               )}
               <Link to="/reports" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Reports</Link>
               <Link to="/profile" className="text-gray-300 hover:text-white font-medium transition px-3 py-2 rounded-lg hover:bg-white/10">Profile</Link>
@@ -131,12 +135,20 @@ function Navbar() {
                 Dashboard
               </Link>
               {user.role === 'Seller' && (
-                <Link to="/add-product" className="flex items-center gap-3 text-lg font-bold text-white p-3 rounded-2xl hover:bg-white/5 transition-colors group" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                  </div>
-                  Add Product
-                </Link>
+                <>
+                  <Link to="/add-product" className="flex items-center gap-3 text-lg font-bold text-white p-3 rounded-2xl hover:bg-white/5 transition-colors group" onClick={() => setIsMobileMenuOpen(false)}>
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                    </div>
+                    Add Product
+                  </Link>
+                  <Link to="/sales" className="flex items-center gap-3 text-lg font-bold text-white p-3 rounded-2xl hover:bg-white/5 transition-colors group" onClick={() => setIsMobileMenuOpen(false)}>
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                    </div>
+                    My Sales
+                  </Link>
+                </>
               )}
               <Link to="/reports" className="flex items-center gap-3 text-lg font-bold text-white p-3 rounded-2xl hover:bg-white/5 transition-colors group" onClick={() => setIsMobileMenuOpen(false)}>
                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
@@ -204,6 +216,7 @@ function App() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/sales" element={<SalesPage />} />
             </Routes>
           </main>
 
