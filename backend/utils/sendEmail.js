@@ -39,7 +39,7 @@ const sendEmail = async ({ to, subject, text, html }) => {
         }
 
         const mailOptions = {
-            from: '"EcoMarket Plus" <noreply@ecomarketplus.com>',
+            from: `"EcoMarket Plus" <${process.env.EMAIL_USER}>`,
             to,
             subject,
             text,
@@ -47,7 +47,7 @@ const sendEmail = async ({ to, subject, text, html }) => {
         };
 
         const info = await transporter.sendMail(mailOptions);
-        console.log("✅ Email sent successfully: %s", info.messageId);
+        console.log("✅ Email sent successfully [ID: %s] [Accepted: %s]", info.messageId, info.accepted.join(','));
         
         // Ethereal provides a dynamic URL to view the sent email in your browser!
         if (!process.env.EMAIL_USER) {
