@@ -1,10 +1,28 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const hpp = require('hpp');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
 // app initializations
 const app = express();
+
+// Set security HTTP headers
+app.use(helmet({
+    contentSecurityPolicy: false, // Prevents blocking inline scripts in React dist
+    crossOriginEmbedderPolicy: false, // Allows cross-origin images to load
+}));
+
+// Rate limiting (Global API limit)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 1000, // Limit each IP to 1000 requests per windowMs
+    message: { message: 'Too many requests from this IP, please try again later.' }
+});
+app.use('/api', limiter);
 
 // Middleware
 const allowedOrigins = [
@@ -25,10 +43,22 @@ app.use(cors({
     },
     credentials: true
 }));
-// Middleware for parsing JSON
-app.use(express.json());
+// Middleware for parsing JSON (limit payload size)
+app.use(express.json({ limit: '10kb' }));
+
+// Sanitize data against NoSQL query injection
+app.use(mongoSanitize());
+
+// Prevent HTTP parameter pollution
+app.use(hpp());
 
 // Routes
+app.get('/api', (req, res) => {
+    res.json({ 
+        message: 'EcoMarket Plus API is active',
+        endpoints: ['auth', 'wallet', 'products', 'verify', 'upload', 'orders', 'reports', 'admin']
+    });
+});
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/wallet', require('./routes/walletRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
@@ -71,9 +101,29 @@ if (process.env.NODE_ENV === 'production') {
 
 // Global Error Handler (ensure JSON response)
 app.use((err, req, res, next) => {
-    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    let message = err.message;
+
+    // Mongoose bad ObjectId
+    if (err.name === 'CastError' && err.kind === 'ObjectId') {
+        statusCode = 404;
+        message = 'Resource not found';
+    }
+
+    // Mongoose duplicate key
+    if (err.code === 11000) {
+        statusCode = 400;
+        message = 'This email or account is already registered. Please log in or use another.';
+    }
+
+    // Mongoose validation error
+    if (err.name === 'ValidationError') {
+        statusCode = 400;
+        message = Object.values(err.errors).map(val => val.message).join(', ');
+    }
+
     res.status(statusCode).json({
-        message: err.message,
+        message,
         stack: process.env.NODE_ENV === 'production' ? null : err.stack,
     });
 });

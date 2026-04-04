@@ -5,6 +5,19 @@ const Wallet = require('../models/Wallet');
 const jwt = require('jsonwebtoken');
 const { protect } = require('../middleware/authMiddleware');
 const sendEmail = require('../utils/sendEmail');
+const rateLimit = require('express-rate-limit');
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 6, // 6 attempts
+    message: { message: 'Too many login attempts from this IP, please try again after 15 minutes.' }
+});
+
+const registerLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    limit: 5, // restrict to 5 accounts per hour per IP
+    message: { message: 'Too many accounts created from this IP, please try again later.' }
+});
 
 // Generate JWT
 const generateToken = (id) => {
@@ -13,14 +26,25 @@ const generateToken = (id) => {
     });
 };
 
+// Password Policy Validator
+const isValidPassword = (password) => {
+    return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/.test(password);
+};
+
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
-router.post('/register', async (req, res) => {
+router.post('/register', registerLimiter, async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
+        
+        if (!isValidPassword(password)) {
+            return res.status(400).json({ message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.' });
+        }
 
-        const userExists = await User.findOne({ email });
+        const normalizedEmail = email ? email.trim().toLowerCase() : '';
+
+        const userExists = await User.findOne({ email: normalizedEmail });
 
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
@@ -28,7 +52,7 @@ router.post('/register', async (req, res) => {
 
         const user = await User.create({
             name,
-            email,
+            email: normalizedEmail,
             password,
             role: role || 'Buyer',
         });
@@ -81,11 +105,12 @@ router.post('/register', async (req, res) => {
 // @desc    Auth user & get token
 // @route   POST /api/auth/login
 // @access  Public
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
     try {
         const { email, password } = req.body;
+        const normalizedEmail = email ? email.trim().toLowerCase() : '';
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: normalizedEmail });
 
         if (user && (await user.matchPassword(password))) {
             res.json({
@@ -136,12 +161,15 @@ router.put('/profile', protect, async (req, res) => {
 
         if (user) {
             user.name = req.body.name || user.name;
-            user.email = req.body.email || user.email;
+            user.email = req.body.email ? req.body.email.trim().toLowerCase() : user.email;
             if (req.body.avatar !== undefined) user.avatar = req.body.avatar;
             if (req.body.address !== undefined) user.address = req.body.address;
             if (req.body.phone !== undefined) user.phone = req.body.phone;
 
             if (req.body.password) {
+                if (!isValidPassword(req.body.password)) {
+                    return res.status(400).json({ message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.' });
+                }
                 user.password = req.body.password;
             }
 
