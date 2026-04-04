@@ -46,8 +46,13 @@ app.use(cors({
 // Middleware for parsing JSON (limit payload size)
 app.use(express.json({ limit: '10kb' }));
 
-// Sanitize data against NoSQL query injection
-app.use(mongoSanitize());
+// Sanitize data against NoSQL query injection (Express 5.x compatible)
+app.use((req, res, next) => {
+    if (req.body) mongoSanitize.sanitize(req.body);
+    if (req.query) mongoSanitize.sanitize(req.query);
+    if (req.params) mongoSanitize.sanitize(req.params);
+    next();
+});
 
 // Prevent HTTP parameter pollution
 app.use(hpp());
