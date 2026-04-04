@@ -14,6 +14,7 @@ const app = express();
 app.use(helmet({
     contentSecurityPolicy: false, // Prevents blocking inline scripts in React dist
     crossOriginEmbedderPolicy: false, // Allows cross-origin images to load
+    crossOriginResourcePolicy: { policy: 'cross-origin' }, // Essential for allowing frontend to load backend /uploads
 }));
 
 // Rate limiting (Global API limit)
