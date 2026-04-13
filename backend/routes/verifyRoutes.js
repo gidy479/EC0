@@ -52,12 +52,20 @@ Return ONLY a valid JSON object strictly matching this format:
             }
         } catch (apiError) {
             console.error("Gemini API Error:", apiError);
-            // Fallback behavior if AI fails or API key is missing
-            aiResponseJSON = {
-                status: 'rejected',
-                confidence: 0,
-                reasoning: 'AI Verification service unavailable or failed. Please ensure GEMINI_API_KEY is configured.'
-            };
+            
+            let errorMessage = "AI Verification service is currently unavailable. Please try again later.";
+            if (apiError.status === 429) {
+                errorMessage = "AI Verification quota exceeded. Please try again later.";
+            } else if (apiError.status === 503) {
+                errorMessage = "AI Verification service is experiencing temporary high demand.";
+            } else if (apiError.message && apiError.message.includes('API key not valid')) {
+                errorMessage = "Invalid Gemini API Key configuration.";
+            }
+
+            return res.status(503).json({ 
+                message: errorMessage,
+                error: apiError.message
+            });
         }
 
         product.verificationStatus = aiResponseJSON.status;
