@@ -101,7 +101,16 @@ const AddProductPage = () => {
             });
 
             const verificationData = await verRes.json();
-            setVerificationResult(verificationData);
+            
+            if (!verRes.ok) {
+                setVerificationResult({
+                    status: 'failed',
+                    confidence: 0,
+                    reasoning: verificationData.message || "AI Verification failed or is unavailable."
+                });
+            } else {
+                setVerificationResult(verificationData);
+            }
 
         } catch (error) {
             alert("Error: " + error.message);
