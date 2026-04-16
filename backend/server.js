@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -73,7 +74,6 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
-const path = require('path');
 const fs = require('fs');
 
 // Ensure uploads directory exists

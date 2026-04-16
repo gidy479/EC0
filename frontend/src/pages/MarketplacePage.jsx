@@ -41,7 +41,7 @@ const MarketplacePage = () => {
     return (
         <div className="space-y-8 px-4 sm:px-0 animate-fade-in-up pb-12">
             {/* Hero Section */}
-            <div className="glass p-8 md:p-14 text-center rounded-3xl mt-6 relative overflow-hidden border border-white/40 shadow-xl">
+            <div className="glass p-8 md:p-14 text-center rounded-[2.5rem] mt-2 relative overflow-hidden border border-white/50 shadow-2xl shadow-teal-900/10 transition-all duration-700 hover:shadow-teal-900/20">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse-slow"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
 
@@ -58,9 +58,9 @@ const MarketplacePage = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search verified products..."
-                            className="w-full pl-6 pr-14 py-4 rounded-2xl glass border border-white/60 shadow-inner focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white/95 text-gray-800 placeholder-gray-400 transition-all duration-300 font-bold text-sm md:text-base"
+                            className="w-full pl-6 pr-14 py-4 rounded-full glass border border-white/60 shadow-inner focus:outline-none focus:ring-4 focus:ring-green-400/50 focus:bg-white/95 text-gray-800 placeholder-gray-400 transition-all duration-500 font-bold text-sm md:text-base"
                         />
-                        <button type="submit" className="absolute right-2 top-2 bg-gradient-to-r from-green-600 to-teal-700 text-white p-2.5 rounded-xl hover:from-green-700 hover:to-teal-800 transition shadow-lg transform active:scale-90">
+                        <button type="submit" className="absolute right-2 top-2 bg-gradient-to-r from-green-500 to-teal-600 text-white p-2.5 rounded-full hover:from-green-600 hover:to-teal-700 transition-all shadow-[0_0_15px_rgba(20,184,166,0.4)] transform active:scale-90 hover:scale-105">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
@@ -106,12 +106,12 @@ const MarketplacePage = () => {
                     <div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 mb-12">
                             {products.map((product, idx) => (
-                            <div key={product._id} className="glass p-3 rounded-3xl overflow-hidden group border border-white/40 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col animate-fade-in-up" style={{ animationDelay: `${idx * 0.05}s` }}>
-                                <div className="h-52 md:h-56 bg-white/50 rounded-2xl flex items-center justify-center overflow-hidden relative">
+                            <div key={product._id} className="glass-card p-3 rounded-[2rem] group flex flex-col animate-fade-in-up" style={{ animationDelay: `${idx * 0.05}s` }}>
+                                <div className="h-52 md:h-56 bg-white/50 rounded-3xl flex items-center justify-center overflow-hidden relative shadow-inner">
                                     {/* Verification Badge Float */}
-                                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center shadow-lg z-10 border border-white/60">
-                                        <svg className="w-3.5 h-3.5 mr-1.5 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                                        <span className="text-[9px] font-black text-green-700 uppercase tracking-widest leading-none">AI VERIFIED</span>
+                                    <div className="absolute top-3 left-3 bg-white/80 backdrop-blur-xl px-4 py-1.5 rounded-full flex items-center shadow-[0_4px_15px_rgba(16,185,129,0.2)] z-10 border border-green-200/50">
+                                        <svg className="w-3.5 h-3.5 mr-1.5 text-green-500 shadow-green-500 drop-shadow-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                                        <span className="text-[10px] font-black text-green-700 uppercase tracking-widest leading-none">AI VERIFIED</span>
                                     </div>
 
                                     {product.images && product.images.length > 0 ? (
@@ -128,9 +128,9 @@ const MarketplacePage = () => {
                                     <div className="flex justify-between items-center mt-auto">
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter leading-none mb-1">Price</span>
-                                            <span className="text-xl font-black text-gray-900 leading-none">GH₵{product.price.toFixed(2)}</span>
+                                            <span className="text-xl font-black text-gray-900 leading-none drop-shadow-sm">GH₵{product.price.toFixed(2)}</span>
                                         </div>
-                                        <Link to={`/product/${product._id}`} className="bg-gradient-to-r from-green-600 to-teal-700 text-white px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg transform active:scale-90 transition-all hover:translate-y-[-2px] hover:shadow-green-500/20">
+                                        <Link to={`/product/${product._id}`} className="bg-gradient-to-r from-slate-800 to-gray-900 text-white px-5 py-2.5 rounded-2xl font-bold text-[11px] uppercase tracking-widest shadow-xl transform group-hover:-translate-y-1 group-hover:shadow-gray-500/30 transition-all duration-300 active:scale-95">
                                             View
                                         </Link>
                                     </div>

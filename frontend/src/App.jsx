@@ -23,8 +23,9 @@ function Navbar() {
 
   return (
     <>
-    <header className="glass-dark sticky top-0 z-[60] mb-6">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-4 md:px-8">
+    <div className="flex justify-center w-full sticky top-4 z-[60] mb-8 px-4 mt-2">
+      <header className="glass-dark rounded-full shadow-2xl border border-white/20 w-full max-w-6xl">
+        <div className="flex justify-between items-center px-6 py-3 md:px-8">
         <Link to="/" className="text-xl md:text-2xl font-black tracking-tighter flex items-center gap-2.5 group z-50 transition active:scale-95" onClick={() => setIsMobileMenuOpen(false)}>
           <img src="/favicon.png" alt="Logo" className="w-8 h-8 md:w-10 md:h-10 rounded-xl shadow-lg transform group-hover:rotate-12 transition-transform duration-300 border border-white/20" />
           <span className="text-white drop-shadow-sm">EcoMarket<span className="text-green-400">Plus</span></span>
@@ -86,8 +87,8 @@ function Navbar() {
             )}
           </button>
         </div>
-      </div>
-    </header>
+      </header>
+    </div>
 
     {/* Mobile Menu Side Drawer & Backdrop (Moved outside the <header> tag for full-viewport coverage) */}
     <div className={`lg:hidden fixed inset-0 z-[100] transition-all duration-300 ${isMobileMenuOpen ? 'visible' : 'invisible'}`}>

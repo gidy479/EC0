@@ -26,6 +26,37 @@ Confirms the system meets defining business requirements and is comprehensively 
 ### 4.2.5 Selected Approach
 **Functional and Acceptance Testing** was utilized as the primary approach, supported by ongoing Unit tests. Because the platform facilitates financial transactions and sensitive user data, Functional Testing was deemed essential to ensure that integrated business logic (such as order placements and payment escrow) operated flawlessly from end to end. Acceptance Testing ultimately confirmed that the core organizational goals—building a secure, trustworthy, and autonomous marketplace—were fundamentally realized prior to deployment.
 
+### 4.2.6 Test Data & Execution Examples
+
+To validate the system comprehensively, specific test cases with sample data were executed across key modules:
+
+**1. Authentication Testing (Unit & Functional)**
+* **Scenario Setup**: Attempting to register a new vendor.
+* **Test Data Input**: 
+  * Name: `Jane Doe`
+  * Email: `jane.merchant@test.com`
+  * Password: `password123` (Weak) vs. `Str0ngP@ssw0rd!` (Strong)
+* **Expected Result**: The weak password should trigger a validation error overlay. The strong password should successfully encrypt (bcrypt) and return a valid JWT token.
+* **Actual Result**: Weak password rejected; strong password accepted and JWT generated successfully.
+
+**2. AI Product Verification (Functional)**
+* **Scenario Setup**: Adding a product to trigger the AI anti-greenwashing filter.
+* **Test Case A (Legitimate Claims)**:
+  * **Input**: Name: `Bamboo Toothbrush`, Description: `Made from sustainably sourced bamboo with FSC standard certification.`, Eco-labels: `FSC`.
+  * **Result**: AI returned `"verified"` status with 98% confidence.
+* **Test Case B (Greenwashing Falsehoods)**:
+  * **Input**: Name: `Eco Shirt`, Description: `100% natural magic for the earth. Completely green.`, Eco-labels: `None`.
+  * **Result**: AI returned `"rejected"` status for vague, unsubstantiated claims.
+
+**3. Escrow & Wallet Withdrawal (Acceptance)**
+* **Scenario Setup**: Vendor requests to withdraw a cleared balance from their dashboard.
+* **Test Data Input**: 
+  * Available Wallet Balance: `GH₵ 500.00`
+  * Withdrawal Request: `GH₵ 150.00`
+  * Method: `Mobile Money (MTN, +23354XXXXXXX)`
+* **Expected Result**: Successful platform request. Wallet deduction applies instantly, lowering balance to `GH₵ 350.00`.
+* **Actual Result**: Balance successfully updated. Transaction recorded accurately on the Admin Dashboard for processing.
+
 ---
 
 ## 4.3 Implementation Strategies
@@ -84,7 +115,29 @@ The following section provides a visual walkthrough of the platform's core funct
 Each feature was purposefully engineered to address specific user and organizational needs. The escrow payment workflow aligns directly with the necessity for buyer-seller trust online. Mobile-first design elements ensure accessibility for modern smartphone shoppers, and customizable wallet withdrawals provide vendors with needed financial autonomy.
 
 **4. Operational Guide**  
-Step-by-step guidance has been drafted on how to operate, maintain, and troubleshoot the system. The guide covers everything from standard user operations (modifying profiles, adding products) to advanced administrative troubleshooting (managing production URLs, clearing deleted data references, and verifying API server routing).
+The following serves as a detailed operational manual for configuring and using the system:
+
+**A. System Requirements & Setup**
+Before operating the application, ensure the host environment meets the necessary technical specifications:
+* **Operating System**: Linux, macOS, or Windows.
+* **Dependencies**: Node.js (v18+), npm, and a running MongoDB instance.
+* **Environment Variables**: Configure `.env` files for both the backend (Database URI, JWT secret, Gemini API key) and frontend (Vite API Base URL).
+
+**B. Starting the Application**
+For local development: Open two terminals. In `backend/`, run `npm run dev` to start the Express API. In `frontend/`, run `npm run dev` to launch the React interface.
+For production: The application is served statically from the backend. Run `npm run build:full` to compile the frontend, then start the server via `npm start`.
+
+**C. Vendor / Merchant Operations**
+* **Adding a Product**: Log in with a Merchant account, navigate to the "List Product" interface, fill in product specifics, and upload a clear product image. Clicking "Submit" automatically triggers the AI Verification process.
+* **Wallet Withdrawals**: From the Vendor Dashboard, access the Wallet. If funds are available, click "Request Withdrawal," select the preferred payment method (Mobile Money or Bank Transfer), specify the amount, and submit the request. 
+
+**D. Buyer Operations**
+Browse the mobile-responsive marketplace and look for the "AI Verified" badge to ensure sustainable claims are legitimate. Add items to the cart and proceed to Checkout. Payments are held securely in Escrow until the product is fulfilled.
+
+**E. Administrator Troubleshooting**
+Administrators can log in to view the Admin Dashboard and audit order statuses.
+* **Image Errors (404s)**: Ensure the backend `/uploads` folder is intact and the frontend `API_BASE_URL` exactly matches the backend hosting URL.
+* **AI Verification API Limits**: If the Gemini AI service hits a limit, the system gracefully falls back and sets the product's verification status to `failed` without crashing. Vendors are meant to try again later.
 
 ---
 
