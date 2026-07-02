@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -87,6 +87,7 @@ function Navbar() {
             )}
           </button>
         </div>
+      </div>
       </header>
     </div>
 
@@ -190,6 +191,13 @@ function Navbar() {
 }
 
 function App() {
+  useEffect(() => {
+    // Initialize global dark theme based on Appearance Engine saved state
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-theme');
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <CartProvider>

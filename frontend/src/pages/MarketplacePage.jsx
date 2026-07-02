@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import API_BASE_URL from '../config/apiConfig';
 import { getSafeImageUrl } from '../utils/imageUtils';
 
@@ -7,6 +8,25 @@ const MarketplacePage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const { user } = useContext(AuthContext);
+
+    const handleDeleteProduct = async (id) => {
+        if (window.confirm("Are you sure you want to permanently delete this product?")) {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${user.token}` }
+                });
+                if (res.ok) {
+                    setProducts(products.filter(p => p._id !== id));
+                } else {
+                    alert("Failed to delete product");
+                }
+            } catch (error) {
+                console.error("Delete error:", error);
+            }
+        }
+    };
 
     const [page, setPage] = useState(1);
     const [pages, setPages] = useState(1);
@@ -124,15 +144,26 @@ const MarketplacePage = () => {
                                 </div>
                                 <div className="p-4 flex flex-col flex-grow">
                                     <h4 className="font-black text-gray-800 text-lg truncate mb-1 leading-tight">{product.name}</h4>
-                                    <p className="text-gray-400 text-xs font-bold line-clamp-2 mb-4 h-9 leading-relaxed">{product.description}</p>
+                                    <p className="text-gray-400 text-xs font-medium line-clamp-2 mb-4 h-9 leading-relaxed">{product.description}</p>
                                     <div className="flex justify-between items-center mt-auto">
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter leading-none mb-1">Price</span>
                                             <span className="text-xl font-black text-gray-900 leading-none drop-shadow-sm">GH₵{product.price.toFixed(2)}</span>
                                         </div>
-                                        <Link to={`/product/${product._id}`} className="bg-gradient-to-r from-slate-800 to-gray-900 text-white px-5 py-2.5 rounded-2xl font-bold text-[11px] uppercase tracking-widest shadow-xl transform group-hover:-translate-y-1 group-hover:shadow-gray-500/30 transition-all duration-300 active:scale-95">
-                                            View
-                                        </Link>
+                                        <div className="flex gap-2">
+                                            {user && user.role === 'Admin' && (
+                                                <button
+                                                    onClick={() => handleDeleteProduct(product._id)}
+                                                    className="bg-red-50 text-red-500 px-3 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-100 hover:text-red-700 transition-all border border-red-200"
+                                                    title="Delete Product"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                </button>
+                                            )}
+                                            <Link to={`/product/${product._id}`} className="bg-gradient-to-r from-green-600 to-teal-700 text-white px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg transform active:scale-90 transition-all hover:translate-y-[-2px] hover:shadow-green-500/20">
+                                                View
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

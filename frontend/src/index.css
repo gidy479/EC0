@@ -18,6 +18,16 @@
       radial-gradient(at 0% 100%, hsla(140, 70%, 95%, 1) 0px, transparent 50%);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  body.dark-theme {
+    @apply bg-slate-950 text-gray-100 font-sans min-h-screen bg-fixed;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(153, 100%, 15%, 0.4) 0px, transparent 60%),
+      radial-gradient(at 100% 0%, hsla(164, 100%, 15%, 0.4) 0px, transparent 60%),
+      radial-gradient(at 100% 100%, hsla(170, 80%, 15%, 0.4) 0px, transparent 60%),
+      radial-gradient(at 0% 100%, hsla(140, 70%, 15%, 0.4) 0px, transparent 60%);
   }
 }
 
@@ -41,6 +51,63 @@
 
   .glass-card:hover {
     box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+  }
+
+  /* Dark Theme Glass Overrides */
+  .dark-theme .glass {
+    @apply bg-slate-900/40 backdrop-blur-3xl border border-white/10;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .dark-theme .glass-dark {
+    @apply bg-slate-950/70 backdrop-blur-3xl border border-white/5 text-white;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .dark-theme .glass-card {
+    @apply bg-slate-800/30 backdrop-blur-2xl border border-white/10 transition-[all,box-shadow] duration-500 hover:-translate-y-2 hover:bg-slate-800/60;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .dark-theme .glass-card:hover {
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+  }
+
+  /* Dark Theme Magic Typography & Colors Overrides */
+  .dark-theme .text-gray-900,
+  .dark-theme .text-gray-800 {
+    @apply text-white;
+  }
+  
+  .dark-theme .text-gray-700,
+  .dark-theme .text-gray-600 {
+    @apply text-slate-300;
+  }
+
+  .dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4 {
+    @apply text-slate-100;
+  }
+
+  .dark-theme .bg-white {
+    @apply bg-slate-900 text-white;
+  }
+
+  .dark-theme .bg-white\/40,
+  .dark-theme .bg-white\/50,
+  .dark-theme .bg-white\/70,
+  .dark-theme .bg-white\/90,
+  .dark-theme .bg-gray-50,
+  .dark-theme .bg-gray-100 {
+    @apply bg-slate-800/50 border-white/10 text-white;
+  }
+
+  .dark-theme .border-gray-200,
+  .dark-theme .border-gray-300 {
+    @apply border-slate-700;
+  }
+
+  .dark-theme input {
+     @apply bg-slate-900 border-slate-700 text-white placeholder-slate-400 shadow-inner;
   }
 
   .glass-card::before {

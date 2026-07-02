@@ -17,6 +17,57 @@ const DashboardPage = () => {
     const [withdrawalDetails, setWithdrawalDetails] = useState({ phone: '', network: 'MTN', accountName: '', accountNumber: '', bankName: '' });
     const [isProcessingDeposit, setIsProcessingDeposit] = useState(false);
     const [isProcessingWithdrawal, setIsProcessingWithdrawal] = useState(false);
+    
+    // Settings States
+    const [newPassword, setNewPassword] = useState('');
+    const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+    const [appearance, setAppearance] = useState(localStorage.getItem('theme') || 'light');
+
+    useEffect(() => {
+        // Initialize theme on mount
+        if (appearance === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    }, [appearance]);
+
+    const toggleTheme = (mode) => {
+        setAppearance(mode);
+        localStorage.setItem('theme', mode);
+        if (mode === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    };
+
+    const handlePasswordUpdate = async (e) => {
+        e.preventDefault();
+        if (!newPassword || newPassword.length < 8) {
+            alert('Password must be at least 8 characters long.');
+            return;
+        }
+        setIsUpdatingPassword(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+                body: JSON.stringify({ password: newPassword })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert('Account password securely updated!');
+                setNewPassword('');
+            } else {
+                alert(data.message || 'Failed to update password');
+            }
+        } catch (error) {
+            alert('Network error while updating password');
+        } finally {
+            setIsUpdatingPassword(false);
+        }
+    };
 
     useEffect(() => {
         if (user) {
@@ -25,6 +76,14 @@ const DashboardPage = () => {
                     const res = await fetch(`${API_BASE_URL}/api/wallet`, {
                         headers: { Authorization: `Bearer ${user.token}` },
                     });
+                    
+                    if (res.status === 401) {
+                        alert("Your session has expired or is invalid. Please log in again.");
+                        logout();
+                        navigate('/login');
+                        return;
+                    }
+
                     const data = await res.json();
                     if (res.ok) {
                         setWallet(data);
@@ -40,6 +99,13 @@ const DashboardPage = () => {
                         const earRes = await fetch(`${API_BASE_URL}/api/wallet/earnings`, {
                             headers: { Authorization: `Bearer ${user.token}` },
                         });
+
+                        if (earRes.status === 401) {
+                            logout();
+                            navigate('/login');
+                            return;
+                        }
+
                         const earData = await earRes.json();
                         if (earRes.ok) {
                             setEarnings(earData.totalEarnings || 0);
@@ -110,6 +176,12 @@ const DashboardPage = () => {
             });
 
             const data = await res.json();
+            if (res.status === 401) {
+                alert("Session expired or unauthorized. Please log in again.");
+                logout();
+                navigate('/login');
+                return;
+            }
             if (res.ok && data.wallet) {
                 alert('Deposit verified and successful! Your trust wallet has been credited.');
                 setWallet(data.wallet);
@@ -176,6 +248,12 @@ const DashboardPage = () => {
             });
 
             const data = await res.json();
+            if (res.status === 401) {
+                alert("Session expired or unauthorized. Please log in again.");
+                logout();
+                navigate('/login');
+                return;
+            }
             if (res.ok) {
                 alert('Withdrawal request submitted successfully! Your balance has been updated while we process your request.');
                 setWallet({ ...wallet, balance: wallet.balance - Number(withdrawalAmount) });
@@ -308,6 +386,71 @@ const DashboardPage = () => {
                                     </button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Account Settings Module */}
+            <div className="mt-8 glass p-6 md:p-8 rounded-3xl relative overflow-hidden group border border-white/40 shadow-sm">
+                <div className="flex items-center mb-6 border-b border-gray-200/50 pb-4">
+                    <svg className="w-6 h-6 md:w-7 md:h-7 mr-2 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-800">Account Settings</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Password Update Form */}
+                    <div className="bg-white/40 p-5 rounded-2xl border border-white/60 shadow-inner">
+                        <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                            <svg className="w-4 h-4 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            Security & Protocol
+                        </h4>
+                        <p className="text-xs text-gray-500 mb-4">Update your password to a secure new credential.</p>
+                        
+                        <form onSubmit={handlePasswordUpdate} className="space-y-3">
+                            <div>
+                                <input
+                                    type="password"
+                                    required
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="Enter new master password"
+                                    className="w-full px-4 py-3 bg-white/70 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-sm font-bold transition-all"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={isUpdatingPassword}
+                                className="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center text-sm"
+                            >
+                                {isUpdatingPassword ? 'Updating...' : 'Save New Password'}
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* Appearance Controls */}
+                    <div className="bg-white/40 p-5 rounded-2xl border border-white/60 shadow-inner">
+                        <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                            <svg className="w-4 h-4 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+                            Appearance Engine
+                        </h4>
+                        <p className="text-xs text-gray-500 mb-4">Personalize your application's visual interface.</p>
+                        
+                        <div className="flex items-center gap-3">
+                            <button 
+                                onClick={() => toggleTheme('light')}
+                                className={`flex-1 py-3 px-4 rounded-xl font-bold border transition-all text-sm flex justify-center items-center gap-2 ${appearance === 'light' ? 'bg-white border-green-300 text-green-700 shadow-sm ring-2 ring-green-100' : 'bg-gray-50/50 border-gray-200 text-gray-500 hover:bg-white'}`}
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                Light Mode
+                            </button>
+                            <button 
+                                onClick={() => toggleTheme('dark')}
+                                className={`flex-1 py-3 px-4 rounded-xl font-bold border transition-all text-sm flex justify-center items-center gap-2 ${appearance === 'dark' ? 'bg-slate-800 border-slate-700 text-white shadow-sm ring-2 ring-slate-400' : 'bg-gray-50/50 border-gray-200 text-gray-500 hover:bg-slate-800 hover:text-white'}`}
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                                Dark Mode
+                            </button>
                         </div>
                     </div>
                 </div>
